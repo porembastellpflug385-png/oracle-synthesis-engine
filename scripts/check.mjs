@@ -7,6 +7,7 @@ const required = [
   'id="ose-chart"',
   'id="ose-redraw"',
   'id="ose-read"',
+  'id="ose-horizon"',
   'id="ose-report"',
   'id="ose-report-audit"',
   'id="ose-consensus-table"',
@@ -18,6 +19,14 @@ const required = [
 const missing = required.filter((token) => !html.includes(token));
 if (missing.length) {
   throw new Error(`Missing required markup: ${missing.join(', ')}`);
+}
+
+const horizonValues = ['hour', 'day', 'week', 'month', 'quarter', 'half', 'year'];
+const missingHorizons = horizonValues.filter(
+  (value) => !html.includes(`name="ose-horizon" value="${value}"`),
+);
+if (missingHorizons.length) {
+  throw new Error(`Missing prediction horizons: ${missingHorizons.join(', ')}`);
 }
 
 const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)]
@@ -32,4 +41,4 @@ if (/window\.openai|sendFollowUpMessage/.test(html)) {
   throw new Error('Host-only Codex APIs must not appear in the standalone build.');
 }
 
-console.log(`Validated ${scripts.length} inline scripts and ${required.length} required UI contracts.`);
+console.log(`Validated ${scripts.length} inline scripts, ${required.length} UI contracts, and ${horizonValues.length} prediction horizons.`);

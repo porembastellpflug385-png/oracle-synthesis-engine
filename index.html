@@ -955,6 +955,65 @@ html>body{
       justify-content: flex-end;
       gap: 0.5rem;
     }
+    #oracle-synthesis-engine .ose-horizon {
+      min-width: 0;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+    #oracle-synthesis-engine .ose-horizon legend {
+      margin-bottom: 0.42rem;
+      color: var(--muted-foreground);
+      font-weight: 500;
+    }
+    #oracle-synthesis-engine .ose-horizon-options {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 0.35rem;
+      padding: 0.3rem;
+      border: 1px solid var(--border);
+      border-radius: 1.05rem;
+      background: color-mix(in srgb, var(--background) 48%, transparent);
+      box-shadow: inset 0 1px 0 var(--ose-hairline);
+    }
+    #oracle-synthesis-engine .ose-horizon-option {
+      position: relative;
+      min-width: 0;
+      cursor: pointer;
+    }
+    #oracle-synthesis-engine .ose-horizon-option input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+    #oracle-synthesis-engine .ose-horizon-option span {
+      display: grid;
+      min-height: 2.25rem;
+      place-items: center;
+      padding: 0.35rem 0.28rem;
+      border-radius: 0.78rem;
+      color: var(--muted-foreground);
+      font-size: 0.78rem;
+      font-weight: 560;
+      text-align: center;
+      transition: color 160ms ease, background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    }
+    #oracle-synthesis-engine .ose-horizon-option:hover span {
+      color: var(--foreground);
+      background: color-mix(in srgb, var(--foreground) 5%, transparent);
+    }
+    #oracle-synthesis-engine .ose-horizon-option input:checked + span {
+      color: var(--primary-foreground);
+      background: var(--primary);
+      box-shadow: 0 5px 14px color-mix(in srgb, var(--primary) 22%, transparent);
+      transform: translateY(-1px);
+    }
+    #oracle-synthesis-engine .ose-horizon-option input:focus-visible + span {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+    }
     #oracle-synthesis-engine .ose-stats {
       margin: 1rem 0;
     }
@@ -1560,6 +1619,9 @@ html>body{
       #oracle-synthesis-engine .ose-actions {
         justify-content: flex-start;
       }
+      #oracle-synthesis-engine .ose-horizon-options {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
       #oracle-synthesis-engine .ose-system-nav {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -1653,6 +1715,18 @@ html>body{
         <option value="change">迁移与转变</option>
       </select>
     </label>
+    <fieldset class="ose-horizon ose-wide" id="ose-horizon">
+      <legend>预测周期</legend>
+      <div class="ose-horizon-options">
+        <label class="ose-horizon-option"><input type="radio" name="ose-horizon" value="hour"><span>1 小时</span></label>
+        <label class="ose-horizon-option"><input type="radio" name="ose-horizon" value="day"><span>1 天</span></label>
+        <label class="ose-horizon-option"><input type="radio" name="ose-horizon" value="week"><span>1 周</span></label>
+        <label class="ose-horizon-option"><input type="radio" name="ose-horizon" value="month"><span>1 个月</span></label>
+        <label class="ose-horizon-option"><input type="radio" name="ose-horizon" value="quarter" checked><span>3 个月</span></label>
+        <label class="ose-horizon-option"><input type="radio" name="ose-horizon" value="half"><span>半年</span></label>
+        <label class="ose-horizon-option"><input type="radio" name="ose-horizon" value="year"><span>1 年</span></label>
+      </div>
+    </fieldset>
     <label class="form-label ose-wide" for="ose-question">你想问的一件事
       <input class="form-control" id="ose-question" type="text" maxlength="80" value="未来三个月，我最应该把力量放在哪里？">
     </label>
@@ -1666,7 +1740,7 @@ html>body{
 
   <div class="viz-grid ose-stats" aria-live="polite">
     <div class="card viz-stat">
-      <span class="text-muted">九十日总势</span>
+      <span class="text-muted" id="ose-overall-label">三个月总势</span>
       <span class="viz-stat-value" id="ose-overall">78</span>
       <span class="text-small text-muted" id="ose-overall-note">先整合，再加速</span>
     </div>
@@ -1714,7 +1788,7 @@ html>body{
     </div>
   </div>
 
-  <div class="ose-synthesis" aria-label="九十日节律">
+  <div class="ose-synthesis" id="ose-synthesis" aria-label="三个月节律">
     <div class="ose-phase">
       <strong id="ose-phase-1-title">第 1—30 日 · 收束</strong>
       <span class="text-small" id="ose-phase-1-text">减少并行目标，清理一个长期拖延。</span>
@@ -1732,7 +1806,7 @@ html>body{
   <section class="card ose-report" id="ose-report" hidden aria-live="polite">
     <header class="ose-report-header">
       <div>
-        <p class="ose-report-kicker">Synthesis Report · 90 Days</p>
+        <p class="ose-report-kicker" id="ose-report-kicker">Synthesis Report · 3 Months</p>
         <h2 id="ose-report-title">深度合参</h2>
         <p class="ose-report-summary" id="ose-report-question"></p>
       </div>
@@ -1798,12 +1872,12 @@ html>body{
 
     <section class="ose-report-section">
       <div class="ose-report-section-title">
-        <h3>未来 90 天 · 三阶段行动</h3>
+        <h3 id="ose-plan-title">未来三个月 · 三阶段行动</h3>
         <p>每一阶段只保留一个主要任务，并用现实反馈决定是否进入下一阶段。</p>
       </div>
       <div class="ose-stage-grid">
         <article class="ose-stage" data-stage="01" id="ose-report-stage-1">
-          <span class="ose-stage-window">DAY 01—30 · 诊断</span>
+          <span class="ose-stage-window" id="ose-stage-1-window">DAY 01—30 · 诊断</span>
           <h3 id="ose-stage-1-heading"></h3>
           <p id="ose-stage-1-body"></p>
           <p class="ose-stage-action" id="ose-stage-1-action"></p>
@@ -1815,7 +1889,7 @@ html>body{
           <p class="ose-stage-action" id="ose-stage-2-action"></p>
         </article>
         <article class="ose-stage" data-stage="03" id="ose-report-stage-3">
-          <span class="ose-stage-window">DAY 61—90 · 定势</span>
+          <span class="ose-stage-window" id="ose-stage-3-window">DAY 61—90 · 定势</span>
           <h3 id="ose-stage-3-heading"></h3>
           <p id="ose-stage-3-body"></p>
           <p class="ose-stage-action" id="ose-stage-3-action"></p>
@@ -1830,7 +1904,7 @@ html>body{
         <p id="ose-report-hypothesis"></p>
       </div>
       <div class="ose-decision-card is-stop">
-        <span class="ose-decision-label">STOP RULE · 第 45 天</span>
+        <span class="ose-decision-label" id="ose-stop-label">STOP RULE · 第 45 天</span>
         <h3>一个明确的停止条件</h3>
         <p id="ose-report-stop"></p>
       </div>
@@ -1988,6 +2062,52 @@ html>body{
           stop: '到第 45 天，若新路径没有产生持续参与、明确邀请、收入可能或生活质量改善中的至少两项，停止扩大不可逆成本，保留退路并重做试验。'
         }
       };
+      const horizons = {
+        hour: {
+          label:'1 小时', reportLabel:'一小时', english:'1 Hour', totalMinutes:60, window:[12,48], stopLabel:'第 30 分钟',
+          phases:['前 20 分钟','中间 20 分钟','最后 20 分钟'],
+          reportWindows:['MIN 00—20 · 诊断','MIN 21—40 · 验证','MIN 41—60 · 定势']
+        },
+        day: {
+          label:'1 天', reportLabel:'一天', english:'1 Day', totalMinutes:1440, window:[240,1200], stopLabel:'第 12 小时',
+          phases:['第 1—8 小时','第 9—16 小时','第 17—24 小时'],
+          reportWindows:['HOUR 01—08 · 诊断','HOUR 09—16 · 验证','HOUR 17—24 · 定势']
+        },
+        week: {
+          label:'1 周', reportLabel:'一周', english:'1 Week', totalMinutes:10080, window:[1440,8640], stopLabel:'第 4 天',
+          phases:['第 1—2 天','第 3—5 天','第 6—7 天'],
+          reportWindows:['DAY 01—02 · 诊断','DAY 03—05 · 验证','DAY 06—07 · 定势']
+        },
+        month: {
+          label:'1 个月', reportLabel:'一个月', english:'1 Month', totalMinutes:43200, window:[5760,37440], stopLabel:'第 15 天',
+          phases:['第 1—10 天','第 11—20 天','第 21—30 天'],
+          reportWindows:['DAY 01—10 · 诊断','DAY 11—20 · 验证','DAY 21—30 · 定势']
+        },
+        quarter: {
+          label:'3 个月', reportLabel:'三个月', english:'3 Months', totalMinutes:129600, window:[25920,73440], stopLabel:'第 45 天',
+          phases:['第 1—30 天','第 31—60 天','第 61—90 天'],
+          reportWindows:['DAY 01—30 · 诊断','DAY 31—60 · 验证','DAY 61—90 · 定势']
+        },
+        half: {
+          label:'半年', reportLabel:'半年', english:'6 Months', totalMinutes:259200, window:[51840,207360], stopLabel:'第 90 天',
+          phases:['第 1—2 个月','第 3—4 个月','第 5—6 个月'],
+          reportWindows:['MONTH 01—02 · 诊断','MONTH 03—04 · 验证','MONTH 05—06 · 定势']
+        },
+        year: {
+          label:'1 年', reportLabel:'一年', english:'1 Year', totalMinutes:525600, window:[86400,460800], stopLabel:'第 6 个月',
+          phases:['第 1—4 个月','第 5—8 个月','第 9—12 个月'],
+          reportWindows:['MONTH 01—04 · 诊断','MONTH 05—08 · 验证','MONTH 09—12 · 定势']
+        }
+      };
+      const horizonQuestions = {
+        hour:'未来一小时，我最应该把力量放在哪里？',
+        day:'未来一天，我最应该把力量放在哪里？',
+        week:'未来一周，我最应该把力量放在哪里？',
+        month:'未来一个月，我最应该把力量放在哪里？',
+        quarter:'未来三个月，我最应该把力量放在哪里？',
+        half:'未来半年，我最应该把力量放在哪里？',
+        year:'未来一年，我最应该把力量放在哪里？'
+      };
       const directionByKua = {
         1:['北','流动与信息'],2:['西南','承载与协作'],3:['东','启动与行动'],4:['东南','渗透与成长'],
         6:['西北','规则与贵人'],7:['西','表达与交换'],8:['东北','积累与学习'],9:['南','可见度与声誉']
@@ -2081,21 +2201,87 @@ html>body{
         if (k === 5) k = mode === 'male' ? 2 : 8;
         return k;
       }
-      function formatWindow(date) {
+      function formatWindow(date, horizonKey) {
+        const time=`${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+        if (horizonKey === 'hour') return time;
+        if (horizonKey === 'day') return `今天 ${time}`;
+        if (horizonKey === 'year') return `${date.getFullYear()}年${date.getMonth()+1}月${date.getDate()}日前后`;
         return `${date.getMonth()+1}月${date.getDate()}日前后`;
       }
+      function timedPlan(d) {
+        const base=focusReports[d.input.focus];
+        const h=d.horizon;
+        const focus=d.focus[0];
+        const safety=d.input.focus==='wellbeing'?'若出现症状加重或安全风险，应立即停止自我试验并寻求专业帮助。':'';
+        if (d.input.horizon === 'hour') return {
+          phase1Body:`把“${d.input.question}”缩成一个在 60 分钟内可观察的问题，只保留与${focus}直接相关的一项变量。`,
+          phase1Action:`交付物：写下一个明确取舍，以及你暂时不处理的事项。`,
+          phase2Body:`完成一个最小、可撤回的动作，观察身体感受、对方回应或任务进展，不把瞬时情绪当成结论。`,
+          phase2Action:`窗口动作：${d.focus[2]}，但不做高成本或不可逆决定。`,
+          phase3Body:`记录什么发生了变化、什么没有变化，并把下一步缩小到一个可执行动作。`,
+          phase3Action:`结果标准：获得一个可描述的现实信号，而不是“有预感”。`,
+          hypothesis:`假设：此刻${focus}的主要阻力是注意力分散。用前 20 分钟只处理一个目标；若清晰度和进度都没有改善，就推翻该假设。`,
+          stop:`${safety}到${h.stopLabel}，若仍无法说清问题、行动与所需证据，停止继续解读，改为收集事实。`
+        };
+        if (d.input.horizon === 'day') return {
+          phase1Body:`在当天前段完成信息盘点，区分事实、担忧与欲望，不同时启动多个${focus}任务。`,
+          phase1Action:`交付物：今天唯一必须完成的动作，以及一个明确不做清单。`,
+          phase2Body:`在关键窗口执行一次低成本验证，让现实世界对你的选择给出回应。`,
+          phase2Action:`窗口动作：${d.focus[2]}，并记录具体回应。`,
+          phase3Body:`当天结束前复盘有效信号，把未验证的解释留到明天，不在疲劳状态下升级承诺。`,
+          phase3Action:`结果标准：形成一个明天可以继续、修改或停止的决定。`,
+          hypothesis:`假设：今天${focus}最需要的不是更多信息，而是一次明确排序。若完成排序后仍没有行动改善，就推翻该假设。`,
+          stop:`${safety}到${h.stopLabel}，若没有出现新的事实或行动进展，停止追加投入，把决定延后到获得信息之后。`
+        };
+        if (d.input.horizon === 'week') return {
+          phase1Body:`前两天完成${focus}盘点，只保留一个本周能够验证的主要目标。`,
+          phase1Action:`交付物：一个七天实验、成功指标和不做清单。`,
+          phase2Body:`用三天执行并收集反馈，不根据单次顺利或受挫临时改写标准。`,
+          phase2Action:`窗口动作：${d.focus[2]}，争取一个来自外部的明确回应。`,
+          phase3Body:`最后两天复盘证据，把有效部分留在下周，把无证据支线关闭。`,
+          phase3Action:`结果标准：至少一个行为或反馈可以重复。`,
+          hypothesis:`假设：本周${focus}的主要阻力来自目标过多。连续三天只推进一个主实验；若产出与反馈都没有改善，就推翻该假设。`,
+          stop:`${safety}到${h.stopLabel}，若实验没有任何可观察反馈，停止扩大范围，重新定义问题。`
+        };
+        if (d.input.horizon === 'month') return {
+          phase1Body:base.diagnosis.replace('连续 14 天','连续 7 天'),
+          phase1Action:`交付物：一个 30 天主实验、预算上限与暂停清单。`,
+          phase2Body:base.test,
+          phase2Action:base.phase2Action,
+          phase3Body:base.stabilize,
+          phase3Action:base.phase3Action,
+          hypothesis:base.hypothesis.replace('连续 14 天','连续 7 天').replace('14 天','7 天'),
+          stop:`${safety}到${h.stopLabel}，若没有获得至少一类可重复的现实证据，停止追加资源并重做问题定义。`
+        };
+        const phaseScale=d.input.horizon==='quarter'?'90 天':h.reportLabel;
+        const stopText=d.input.horizon==='quarter'
+          ? base.stop
+          : `${safety}到${h.stopLabel}，若没有形成至少两类持续证据——明确承诺、稳定使用、可重复产出、关系改善或可解释回报——停止扩大不可逆成本，返回验证阶段。`;
+        return {
+          phase1Body:base.diagnosis,
+          phase1Action:base.phase1Action.replace('90 天',phaseScale),
+          phase2Body:base.test,
+          phase2Action:base.phase2Action,
+          phase3Body:base.stabilize,
+          phase3Action:base.phase3Action,
+          hypothesis:d.input.horizon==='year'?base.hypothesis.replace('14 天','30 天'):base.hypothesis,
+          stop:stopText
+        };
+      }
       function getInput() {
+        const horizon=root.querySelector('input[name="ose-horizon"]:checked')?.value || 'quarter';
         return {
           date: $('#ose-birth-date').value || '1992-08-17',
           time: $('#ose-birth-time').value || '09:30',
           gender: $('#ose-gender').value,
           focus: $('#ose-focus').value,
-          question: $('#ose-question').value.trim() || '未来三个月最值得关注什么'
+          horizon,
+          question: $('#ose-question').value.trim() || horizonQuestions[horizon]
         };
       }
       function buildState() {
         const input = getInput();
-        const seed = hashText(`${input.date}|${input.time}|${input.gender}|${input.focus}|${input.question}|${salt}`);
+        const seed = hashText(`${input.date}|${input.time}|${input.gender}|${input.focus}|${input.horizon}|${input.question}|${salt}`);
         const rng = rngFrom(seed);
         const [year,month,day] = input.date.split('-').map(Number);
         const pillars = pillarsFor(input.date,input.time);
@@ -2121,12 +2307,13 @@ html>body{
         const overall = Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
         const agreement = Math.max(4, Math.min(8, Math.round(4 + (sorted[3]-63)/6)));
         const now = new Date();
-        const offset = 18 + (seed % 34);
-        const windowDate = new Date(now.getFullYear(),now.getMonth(),now.getDate()+offset);
+        const horizon = horizons[input.horizon];
+        const offsetMinutes = horizon.window[0] + (seed % (horizon.window[1]-horizon.window[0]+1));
+        const windowDate = new Date(now.getTime()+offsetMinutes*60000);
         const focus = focusCopy[input.focus];
         const lifeCell = kua;
         const result = {
-          input,seed,pillars,sign,kua,direction,theme,hexIndex,changingLine,tarotCards,star,palace,tuibeiNo,scores,overall,agreement,windowDate,lifeCell,focus,
+          input,seed,pillars,sign,kua,direction,theme,hexIndex,changingLine,tarotCards,star,palace,tuibeiNo,scores,overall,agreement,windowDate,horizon,lifeCell,focus,
           details: {}
         };
         const primaryTarot = tarotCards[1];
@@ -2157,7 +2344,7 @@ html>body{
         };
         result.details.zodiac = {
           glyph: sign[0].slice(0,1), title: `星座 · ${sign[0]} · ${sign[1]}象`,
-          text: `本命太阳主题是“${sign[2]}”。九十日内不要只强化熟悉优势，要让它服务于${focus[0]}的具体结果。`
+          text: `本命太阳主题是“${sign[2]}”。在${horizon.reportLabel}观察窗内，不要只强化熟悉优势，要让它服务于${focus[0]}的具体结果。`
         };
         result.details.fengshui = {
           glyph: direction[0], title: `风水 · ${direction[0]}方启用`,
@@ -2260,9 +2447,11 @@ html>body{
       }
       function renderAll(animate=true) {
         state=buildState();
+        const horizon=state.horizon;
+        $('#ose-overall-label').textContent=`${horizon.label}总势`;
         $('#ose-overall').textContent=state.overall;
         $('#ose-overall-note').textContent=state.theme[1];
-        $('#ose-window').textContent=formatWindow(state.windowDate);
+        $('#ose-window').textContent=formatWindow(state.windowDate,state.input.horizon);
         $('#ose-window-note').textContent=`适合推进${state.focus[0]}中的关键选择`;
         $('#ose-consensus').textContent=state.theme[0];
         $('#ose-consensus-note').textContent=`${state.agreement} / 8 体系指向同一课题`;
@@ -2271,11 +2460,12 @@ html>body{
         $('#ose-pillars').textContent=`四柱：${state.pillars.text}`;
         $('#ose-seed-badge').textContent=`可复现象数 · ${String(state.seed).slice(-6)}`;
         $('#ose-session-id').textContent=`#${String(state.seed).slice(-6)}`;
-        $('#ose-phase-1-title').textContent=`第 1—30 日 · ${['收束','蓄势','清理'][state.seed%3]}`;
+        $('#ose-synthesis').setAttribute('aria-label',`${horizon.reportLabel}节律`);
+        $('#ose-phase-1-title').textContent=`${horizon.phases[0]} · ${['收束','蓄势','清理'][state.seed%3]}`;
         $('#ose-phase-1-text').textContent=state.focus[1]+'。';
-        $('#ose-phase-2-title').textContent=`第 31—60 日 · ${state.theme[0]}`;
-        $('#ose-phase-2-text').textContent=`${formatWindow(state.windowDate)}，${state.focus[2]}。`;
-        $('#ose-phase-3-title').textContent=`第 61—90 日 · ${['定势','扩展','落地'][(state.seed>>>3)%3]}`;
+        $('#ose-phase-2-title').textContent=`${horizon.phases[1]} · ${state.theme[0]}`;
+        $('#ose-phase-2-text').textContent=`${formatWindow(state.windowDate,state.input.horizon)}，${state.focus[2]}。`;
+        $('#ose-phase-3-title').textContent=`${horizon.phases[2]} · ${['定势','扩展','落地'][(state.seed>>>3)%3]}`;
         $('#ose-phase-3-text').textContent=state.focus[3]+'。';
         renderChart(animate);renderNav();renderDetail();
         $('#ose-report').hidden=true;
@@ -2288,14 +2478,16 @@ html>body{
         const adviceTarot=cardLabel(d.tarotCards[2]);
         const focus=d.focus[0];
         const narrative=themeNarratives[d.theme[0]];
-        const plan=focusReports[d.input.focus];
+        const plan=timedPlan(d);
+        const horizon=d.horizon;
         const [year,month,day]=d.input.date.split('-').map(Number);
         const birthLabel=`${year}年${month}月${day}日 ${d.input.time}`;
-        $('#ose-report-title').textContent=`${focus} · 九十日深度合参`;
+        $('#ose-report-kicker').textContent=`Synthesis Report · ${horizon.english}`;
+        $('#ose-report-title').textContent=`${focus} · ${horizon.reportLabel}深度合参`;
         $('#ose-report-question').textContent=`“${d.input.question}” · 出生 ${birthLabel}`;
         $('#ose-report-id').textContent=`REPORT #${String(d.seed).slice(-6)}`;
         $('#ose-report-scope').textContent=`${d.agreement} 项聚合 · 8 体系`;
-        $('#ose-report-lead').textContent=`先给结论：未来三个月最值得投入的，不是同时寻找更多可能，而是围绕“${d.theme[0]}”完成一次可验证的取舍——${d.theme[1]}。`;
+        $('#ose-report-lead').textContent=`先给结论：未来${horizon.reportLabel}最值得投入的，不是同时寻找更多可能，而是围绕“${d.theme[0]}”完成一次可验证的取舍——${d.theme[1]}。`;
         $('#ose-report-frame').textContent=`${narrative[0]} ${narrative[1]}`;
 
         $('#ose-audit-zodiac').textContent=`公历 ${birthLabel} 按常用热带黄道日期区间计算为太阳${d.sign[0]}座，并非由随机象数生成；太阳星座只描述单一人格主题，不承担时间预测。`;
@@ -2318,24 +2510,33 @@ html>body{
         $('#ose-signal-4').textContent=`太阳${d.sign[0]}与四柱${d.pillars.dayMaster}日主分别属于单一框架；若它们未与其他体系重复，只保留为自我观察问题。`;
         $('#ose-report-method').textContent=`合参不是把八个体系的句子相加。报告先删除彼此矛盾或无法行动化的信号，再保留至少两个体系都指向的行为模式；“${d.agreement} / 8”只是本次文本聚合强度，不是准确率。单星、方位、牌名和象序不会独立升级为事实判断。`;
 
+        $('#ose-plan-title').textContent=`未来${horizon.reportLabel} · 三阶段行动`;
+        $('#ose-stage-1-window').textContent=horizon.reportWindows[0];
         $('#ose-stage-1-heading').textContent=`收束：${d.focus[1]}`;
         $('#ose-stage-1-body').textContent=plan.diagnosis;
         $('#ose-stage-1-action').textContent=plan.phase1Action;
-        $('#ose-stage-2-window').textContent=`DAY 31—60 · ${formatWindow(d.windowDate)}关键窗口`;
+        $('#ose-stage-2-window').textContent=`${horizon.reportWindows[1]} · ${formatWindow(d.windowDate,d.input.horizon)}窗口`;
         $('#ose-stage-2-heading').textContent=`验证：${d.focus[2]}`;
         $('#ose-stage-2-body').textContent=plan.test;
         $('#ose-stage-2-action').textContent=plan.phase2Action;
+        $('#ose-stage-3-window').textContent=horizon.reportWindows[2];
         $('#ose-stage-3-heading').textContent=`定势：${d.focus[3]}`;
         $('#ose-stage-3-body').textContent=plan.stabilize;
         $('#ose-stage-3-action').textContent=plan.phase3Action;
 
         $('#ose-report-hypothesis').textContent=plan.hypothesis;
+        $('#ose-stop-label').textContent=`STOP RULE · ${horizon.stopLabel}`;
         $('#ose-report-stop').textContent=plan.stop;
         const report=$('#ose-report');report.hidden=false;
         report.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
       }
       makeChart();
       ['#ose-birth-date','#ose-birth-time','#ose-gender','#ose-focus'].forEach(sel=>$(sel).addEventListener('change',()=>{salt=0;renderAll(true);}));
+      root.querySelectorAll('input[name="ose-horizon"]').forEach(input=>input.addEventListener('change',()=>{
+        const question=$('#ose-question');
+        if(Object.values(horizonQuestions).includes(question.value.trim())) question.value=horizonQuestions[input.value];
+        salt=0;renderAll(true);
+      }));
       $('#ose-question').addEventListener('change',()=>{salt=0;renderAll(true);});
       $('#ose-redraw').addEventListener('click',()=>{salt++;renderAll(true);});
       $('#ose-read').addEventListener('click',renderDeepReport);
