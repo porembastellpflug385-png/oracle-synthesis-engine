@@ -8,6 +8,10 @@ const required = [
   'id="ose-redraw"',
   'id="ose-read"',
   'id="ose-report"',
+  'id="ose-report-audit"',
+  'id="ose-consensus-table"',
+  'id="ose-report-stage-1"',
+  'id="ose-report-disclaimer"',
   '象征性合参 · 用于自我反思，不替代专业决策'
 ];
 
