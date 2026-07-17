@@ -1,0 +1,1799 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="description" content="融合塔罗、紫微象盘、周易、洛书、四柱、星座与风水的可复现象征性合参工具。">
+<meta name="theme-color" content="#181818" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<title>万象合参罗盘</title>
+<style>:root {
+  color-scheme: light dark;
+  background-color: var(--background) !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: light-dark(rgb(255 255 255), rgb(24 24 24));
+  --foreground: light-dark(rgb(26 28 31), rgb(255 255 255));
+  --card: color-mix(in oklab, var(--foreground) 5%, transparent);
+  --card-foreground: var(--foreground);
+  --popover: light-dark(rgb(255 255 255), rgb(45 45 45));
+  --popover-foreground: var(--foreground);
+  --primary: light-dark(rgb(51 156 255), rgb(131 195 255));
+  --primary-foreground: light-dark(rgb(255 255 255), rgb(13 13 13));
+  --secondary: light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%));
+  --secondary-foreground: var(--foreground);
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: light-dark(
+    rgb(26 28 31 / 49.4%),
+    rgb(255 255 255 / 49.8%)
+  );
+  --accent: light-dark(rgb(229 242 255), rgb(13 39 63));
+  --accent-foreground: var(--primary);
+  --destructive: light-dark(rgb(226 85 7), rgb(255 133 73));
+  --border: light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%));
+  --input: light-dark(
+    rgb(26 28 31 / 11.8%),
+    color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+  );
+  --ring: light-dark(rgb(51 156 255), rgb(131 195 255 / 76%));
+  --font-size-base: 14px;
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, "Segoe UI", sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --radius: 12.5px;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 17 17'%3E%3Cpath d='M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z'/%3E%3C/svg%3E");
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+  --color-background-primary: var(--background);
+  --color-text-primary: var(--foreground);
+  --color-border-secondary: var(--border);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html > body {
+  margin: 0;
+  padding: 5px;
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: pointer;
+  font-weight: var(--viz-font-weight-medium);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--foreground);
+  font: inherit;
+  text-align: start;
+}
+
+.table :is(th, td) {
+  padding-block: 10px;
+  padding-inline: 0 24px;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table-responsive > .table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
+.table :is(th, td):last-child {
+  padding-inline-end: 0;
+}
+
+.table :is(caption, thead th) {
+  font-weight: 600;
+}
+
+.table thead th {
+  padding-block: 8px;
+  border-bottom-color: color-mix(in srgb, var(--foreground) 16%, transparent);
+}
+
+.table tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.table.table-sm :is(th, td) {
+  padding-block: 6px;
+}
+
+.table.table-sm :is(th, td):not(:last-child) {
+  padding-inline-end: 16px;
+}
+
+.table :is(.text-end, [align="right"]) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.table :is(.text-center, [align="center"]) {
+  text-align: center;
+}
+
+.table .text-nowrap {
+  white-space: nowrap;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: superellipse(1.5);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+#widget > :not(.card) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls > .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls > .form-label > :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type="file"] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type="file"]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type="file"]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type="color"] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type="color"]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: superellipse(1.5);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type="checkbox"] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type="checkbox"]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type="checkbox"]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: "";
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type="radio"] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type="radio"]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: "";
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+    [aria-pressed="true"],
+    [aria-selected="true"],
+    .is-selected
+  ) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed="true"], [aria-selected="true"], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget > svg {
+  width: 100%;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+html>body{padding:0}</style>
+</head>
+<body>
+<section id="oracle-synthesis-engine" aria-label="东西方术数合参工具">
+  <style>
+    #oracle-synthesis-engine {
+      width: 100%;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: clamp(1rem, 4vw, 2.5rem);
+      color: var(--foreground);
+    }
+    #oracle-synthesis-engine .ose-header {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.9rem;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+    #oracle-synthesis-engine .ose-mark {
+      display: grid;
+      place-items: center;
+      width: 3.25rem;
+      aspect-ratio: 1;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      color: var(--foreground);
+      background: var(--card);
+      font-weight: 500;
+    }
+    #oracle-synthesis-engine .ose-header h1,
+    #oracle-synthesis-engine .ose-header p {
+      margin: 0;
+    }
+    #oracle-synthesis-engine .ose-header p {
+      margin-top: 0.2rem;
+      color: var(--muted-foreground);
+    }
+    #oracle-synthesis-engine .ose-controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem 1rem;
+      align-items: end;
+      margin-bottom: 1rem;
+    }
+    #oracle-synthesis-engine .ose-wide {
+      grid-column: 1 / -1;
+    }
+    #oracle-synthesis-engine .ose-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+    #oracle-synthesis-engine .ose-stats {
+      margin-bottom: 0.75rem;
+    }
+    #oracle-synthesis-engine .ose-chart-wrap {
+      position: relative;
+      width: 100%;
+      margin: 0.25rem 0 0.75rem;
+    }
+    #oracle-synthesis-engine .ose-chart {
+      display: block;
+      width: 100%;
+      height: auto;
+      color: var(--muted-foreground);
+      overflow: visible;
+    }
+    #oracle-synthesis-engine .ose-ring,
+    #oracle-synthesis-engine .ose-spoke {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 1;
+      vector-effect: non-scaling-stroke;
+    }
+    #oracle-synthesis-engine .ose-spoke {
+      opacity: 0.8;
+    }
+    #oracle-synthesis-engine .ose-sector {
+      fill: var(--muted);
+      stroke: var(--background);
+      stroke-width: 2;
+      vector-effect: non-scaling-stroke;
+    }
+    #oracle-synthesis-engine .ose-sector.is-active {
+      fill: var(--accent);
+    }
+    #oracle-synthesis-engine .ose-radar-fill {
+      fill: var(--viz-series-1);
+      opacity: 0.14;
+    }
+    #oracle-synthesis-engine .ose-radar-line {
+      fill: none;
+      stroke: var(--viz-series-1);
+      stroke-width: 2.5;
+      vector-effect: non-scaling-stroke;
+    }
+    #oracle-synthesis-engine .ose-radar-dot {
+      fill: var(--background);
+      stroke: var(--viz-series-1);
+      stroke-width: 2;
+      vector-effect: non-scaling-stroke;
+    }
+    #oracle-synthesis-engine .ose-label {
+      fill: var(--foreground);
+      font-weight: 500;
+    }
+    #oracle-synthesis-engine .ose-label-sub,
+    #oracle-synthesis-engine .ose-center-sub,
+    #oracle-synthesis-engine .ose-grid-number {
+      fill: var(--muted-foreground);
+    }
+    #oracle-synthesis-engine .ose-center-value {
+      fill: var(--foreground);
+      font-weight: 500;
+    }
+    #oracle-synthesis-engine .ose-center-ring {
+      fill: var(--card);
+      stroke: var(--border);
+      stroke-width: 1;
+      vector-effect: non-scaling-stroke;
+    }
+    #oracle-synthesis-engine .ose-luoshu-cell {
+      fill: transparent;
+      stroke: var(--border);
+      stroke-width: 1;
+      vector-effect: non-scaling-stroke;
+    }
+    #oracle-synthesis-engine .ose-luoshu-cell.is-life {
+      fill: var(--accent);
+      stroke: var(--ring);
+    }
+    #oracle-synthesis-engine .ose-system-nav {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    #oracle-synthesis-engine .ose-detail {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.8rem 1rem;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    #oracle-synthesis-engine .ose-glyph {
+      min-width: 3.25rem;
+      text-align: center;
+      color: var(--foreground);
+      font-weight: 500;
+    }
+    #oracle-synthesis-engine .ose-detail-copy {
+      min-width: 0;
+    }
+    #oracle-synthesis-engine .ose-detail-title {
+      margin: 0 0 0.25rem;
+      font-weight: 500;
+    }
+    #oracle-synthesis-engine .ose-detail-text {
+      margin: 0;
+      color: var(--muted-foreground);
+    }
+    #oracle-synthesis-engine .ose-synthesis {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    #oracle-synthesis-engine .ose-phase {
+      padding-top: 0.55rem;
+      border-top: 2px solid var(--border);
+    }
+    #oracle-synthesis-engine .ose-phase.is-key {
+      border-top-color: var(--viz-series-1);
+    }
+    #oracle-synthesis-engine .ose-phase strong {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.15rem;
+    }
+    #oracle-synthesis-engine .ose-phase span {
+      color: var(--muted-foreground);
+    }
+    #oracle-synthesis-engine .ose-footer {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      color: var(--muted-foreground);
+    }
+    #oracle-synthesis-engine .ose-report {
+      margin-bottom: 0.75rem;
+    }
+    #oracle-synthesis-engine .ose-report[hidden] {
+      display: none;
+    }
+    #oracle-synthesis-engine .ose-report h2,
+    #oracle-synthesis-engine .ose-report h3,
+    #oracle-synthesis-engine .ose-report p {
+      margin-top: 0;
+    }
+    #oracle-synthesis-engine .ose-report h3 {
+      margin-bottom: 0.25rem;
+    }
+    #oracle-synthesis-engine .ose-report-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem 1.25rem;
+    }
+    @media (max-width: 600px) {
+      #oracle-synthesis-engine .ose-controls {
+        grid-template-columns: 1fr;
+      }
+      #oracle-synthesis-engine .ose-wide {
+        grid-column: auto;
+      }
+      #oracle-synthesis-engine .ose-actions {
+        justify-content: flex-start;
+      }
+      #oracle-synthesis-engine .ose-system-nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      #oracle-synthesis-engine .ose-synthesis {
+        grid-template-columns: 1fr;
+      }
+      #oracle-synthesis-engine .ose-detail {
+        grid-template-columns: 1fr;
+      }
+      #oracle-synthesis-engine .ose-report-grid {
+        grid-template-columns: 1fr;
+      }
+      #oracle-synthesis-engine .ose-glyph {
+        text-align: left;
+      }
+    }
+  </style>
+
+  <header class="ose-header">
+    <div class="ose-mark" aria-hidden="true">象</div>
+    <div>
+      <h1>万象合参罗盘</h1>
+      <p>八种文明术数，共同寻找一个可验证的行动方向。</p>
+    </div>
+  </header>
+
+  <div class="viz-controls ose-controls" aria-label="出生与占问信息">
+    <label class="form-label" for="ose-birth-date">出生日期
+      <input class="form-control" id="ose-birth-date" type="date" value="1992-08-17">
+    </label>
+    <label class="form-label" for="ose-birth-time">出生时间
+      <input class="form-control" id="ose-birth-time" type="time" value="09:30">
+    </label>
+    <label class="form-label" for="ose-gender">命卦取法
+      <select class="form-select" id="ose-gender">
+        <option value="neutral">不设定性别</option>
+        <option value="female">女命传统取法</option>
+        <option value="male">男命传统取法</option>
+      </select>
+    </label>
+    <label class="form-label" for="ose-focus">当前主题
+      <select class="form-select" id="ose-focus">
+        <option value="career">事业与选择</option>
+        <option value="relationship">关系与情感</option>
+        <option value="wealth">财富与资源</option>
+        <option value="wellbeing">身心与节律</option>
+        <option value="change">迁移与转变</option>
+      </select>
+    </label>
+    <label class="form-label ose-wide" for="ose-question">你想问的一件事
+      <input class="form-control" id="ose-question" type="text" maxlength="80" value="未来三个月，我最应该把力量放在哪里？">
+    </label>
+    <div class="ose-wide ose-actions">
+      <span class="viz-badge" id="ose-seed-badge">可复现象数 · 214807</span>
+      <button class="btn" id="ose-redraw" type="button"><i data-lucide="shuffle" aria-hidden="true"></i> 变爻重占</button>
+      <button class="btn btn-primary" id="ose-read" type="button"><i data-lucide="sparkles" aria-hidden="true"></i> 深度合参</button>
+    </div>
+  </div>
+
+  <div class="viz-grid ose-stats" aria-live="polite">
+    <div class="card viz-stat">
+      <span class="text-muted">九十日总势</span>
+      <span class="viz-stat-value" id="ose-overall">78</span>
+      <span class="text-small text-muted" id="ose-overall-note">先整合，再加速</span>
+    </div>
+    <div class="card viz-stat">
+      <span class="text-muted">关键窗口</span>
+      <span class="viz-stat-value" id="ose-window">8月下旬</span>
+      <span class="text-small text-muted" id="ose-window-note">适合做不可逆决定</span>
+    </div>
+    <div class="card viz-stat">
+      <span class="text-muted">合参共识</span>
+      <span class="viz-stat-value" id="ose-consensus">守中破局</span>
+      <span class="text-small text-muted" id="ose-consensus-note">6 / 8 体系指向同一课题</span>
+    </div>
+  </div>
+
+  <div class="ose-chart-wrap">
+    <svg class="ose-chart" id="ose-chart" viewBox="0 0 960 560" role="img" aria-labelledby="ose-svg-title ose-svg-desc">
+      <title id="ose-svg-title">八大术数合参罗盘</title>
+      <desc id="ose-svg-desc">八个方向分别显示塔罗、紫微斗数、周易、洛书、推背象序、四柱、星座与风水的共振指数。</desc>
+      <g id="ose-sectors"></g>
+      <g id="ose-grid"></g>
+      <polygon class="ose-radar-fill" id="ose-radar-fill"></polygon>
+      <polygon class="ose-radar-line" id="ose-radar-line"></polygon>
+      <g id="ose-radar-dots"></g>
+      <circle class="ose-center-ring" cx="480" cy="280" r="72"></circle>
+      <g id="ose-luoshu" aria-hidden="true"></g>
+      <text class="ose-center-value" id="ose-center-value" x="480" y="270" text-anchor="middle">78</text>
+      <text class="ose-center-sub text-small" x="480" y="292" text-anchor="middle">合参共振</text>
+      <text class="ose-center-sub text-small" id="ose-center-theme" x="480" y="314" text-anchor="middle">守中破局</text>
+      <g id="ose-labels"></g>
+    </svg>
+  </div>
+
+  <div class="ose-system-nav" id="ose-system-nav" aria-label="选择术数体系"></div>
+
+  <div class="card ose-detail" aria-live="polite">
+    <div class="ose-glyph" id="ose-detail-glyph" aria-hidden="true">䷊</div>
+    <div class="ose-detail-copy">
+      <p class="ose-detail-title" id="ose-detail-title">周易 · 泰卦</p>
+      <p class="ose-detail-text" id="ose-detail-text">天地交而万物通。当前优势来自连接分散资源，而非独自用力。</p>
+    </div>
+  </div>
+
+  <div class="ose-synthesis" aria-label="九十日节律">
+    <div class="ose-phase">
+      <strong id="ose-phase-1-title">第 1—30 日 · 收束</strong>
+      <span class="text-small" id="ose-phase-1-text">减少并行目标，清理一个长期拖延。</span>
+    </div>
+    <div class="ose-phase is-key">
+      <strong id="ose-phase-2-title">第 31—60 日 · 转折</strong>
+      <span class="text-small" id="ose-phase-2-text">在关键窗口完成一次明确选择。</span>
+    </div>
+    <div class="ose-phase">
+      <strong id="ose-phase-3-title">第 61—90 日 · 定势</strong>
+      <span class="text-small" id="ose-phase-3-text">把新方向变成稳定节律。</span>
+    </div>
+  </div>
+
+  <section class="card ose-report" id="ose-report" hidden aria-live="polite">
+    <h2 id="ose-report-title">深度合参</h2>
+    <p id="ose-report-lead"></p>
+    <div class="ose-report-grid">
+      <div>
+        <h3>多体系共识</h3>
+        <p id="ose-report-consensus" class="text-muted"></p>
+      </div>
+      <div>
+        <h3>需要验证的假设</h3>
+        <p id="ose-report-hypothesis" class="text-muted"></p>
+      </div>
+      <div>
+        <h3>关键行动</h3>
+        <p id="ose-report-action" class="text-muted"></p>
+      </div>
+      <div>
+        <h3>停止条件</h3>
+        <p id="ose-report-stop" class="text-muted"></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="ose-footer text-small">
+    <span id="ose-pillars">四柱：壬申 · 戊申 · 乙丑 · 辛巳</span>
+    <span>象征性合参 · 用于自我反思，不替代专业决策</span>
+  </div>
+
+  <script>
+    (() => {
+      const root = document.getElementById('oracle-synthesis-engine');
+      if (!root) return;
+      const $ = (selector) => root.querySelector(selector);
+      const svgNS = 'http://www.w3.org/2000/svg';
+      const cx = 480, cy = 280;
+      const systems = [
+        { id: 'tarot', label: '塔罗', pair: '潜意识' },
+        { id: 'ziwei', label: '紫微', pair: '人生结构' },
+        { id: 'iching', label: '周易', pair: '变化法则' },
+        { id: 'luoshu', label: '洛书', pair: '数理方位' },
+        { id: 'tuibei', label: '推背象序', pair: '时代隐喻' },
+        { id: 'bazi', label: '四柱', pair: '五行节律' },
+        { id: 'zodiac', label: '星座', pair: '人格动力' },
+        { id: 'fengshui', label: '风水', pair: '空间行动' }
+      ];
+      const stems = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+      const branches = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+      const stemElements = ['木','木','火','火','土','土','金','金','水','水'];
+      const branchElements = ['水','土','木','木','土','火','火','土','金','金','土','水'];
+      const stars = ['紫微','天机','太阳','武曲','天同','廉贞','天府','太阴','贪狼','巨门','天相','天梁','七杀','破军'];
+      const starMessages = {
+        '紫微':'把分散意见整合成共同秩序。','天机':'改变路径比增加力量更有效。','太阳':'主动照亮信息盲区，贵人随之出现。',
+        '武曲':'资源需要明确边界，先算清再投入。','天同':'柔软不是退让，而是降低系统摩擦。','廉贞':'诱惑与原则同时出现，边界决定结果。',
+        '天府':'先建立可持续的储备，再扩大版图。','太阴':'答案正在暗处成熟，不必过早公开。','贪狼':'欲望带来创造力，也会制造过度承诺。',
+        '巨门':'核心阻力来自误解，先把话说准确。','天相':'寻找可信的中介，合作优于单打独斗。','天梁':'守住长期价值，短期损失会转成信誉。',
+        '七杀':'需要一次干净决断，拖延比风险更贵。','破军':'旧结构已无修补价值，拆除就是建设。'
+      };
+      const tarot = [
+        ['愚者','新的道路要求你保留试错空间。','○'],['魔术师','工具已经齐备，关键是集中意志。','Ⅰ'],['女祭司','先听取尚未被语言表达的信号。','Ⅱ'],
+        ['皇后','让资源生长，不要急着收割。','Ⅲ'],['皇帝','建立边界，模糊责任会消耗好运。','Ⅳ'],['教皇','借助成熟框架，但保留独立判断。','Ⅴ'],
+        ['恋人','真正的选择是价值排序，而非两全。','Ⅵ'],['战车','方向一致时，速度才会成为优势。','Ⅶ'],['力量','用稳定驯服冲动，而不是压制它。','Ⅷ'],
+        ['隐者','暂时退出噪音，独处会带来校准。','Ⅸ'],['命运之轮','外部周期正在转向，预留可变空间。','Ⅹ'],['正义','结果取决于是否愿意承担对等代价。','Ⅺ'],
+        ['倒吊人','换一个观察位置，停顿本身就是行动。','Ⅻ'],['死神','结束已完成的阶段，才有空间重生。','ⅩⅢ'],['节制','把对立力量调成可持续的配比。','ⅩⅣ'],
+        ['恶魔','识别让你上瘾却失去自由的交换。','ⅩⅤ'],['高塔','不稳固的结构正在主动暴露裂缝。','ⅩⅥ'],['星星','保持长期信念，同时给希望具体步骤。','ⅩⅦ'],
+        ['月亮','信息尚不完整，避免把恐惧当直觉。','ⅩⅧ'],['太阳','公开、清晰与合作会放大成果。','ⅩⅨ'],['审判','过去的选择正在要求一个正式回应。','ⅩⅩ'],
+        ['世界','一个循环即将闭合，准备进入更大系统。','ⅩⅪ']
+      ];
+      const hexagrams = [
+        '乾','坤','屯','蒙','需','讼','师','比','小畜','履','泰','否','同人','大有','谦','豫',
+        '随','蛊','临','观','噬嗑','贲','剥','复','无妄','大畜','颐','大过','坎','离','咸','恒',
+        '遁','大壮','晋','明夷','家人','睽','蹇','解','损','益','夬','姤','萃','升','困','井',
+        '革','鼎','震','艮','渐','归妹','丰','旅','巽','兑','涣','节','中孚','小过','既济','未济'
+      ];
+      const hexMessages = [
+        '主动创造，但不可透支长期信用。','先承载现实，再等待形势自然成形。','开局混沌，先解决最小的生存问题。','未知不是缺陷，正确的问题比答案重要。',
+        '条件正在聚集，等待不是停滞。','争论会暴露边界，目标是规则而非胜负。','组织纪律决定资源能否形成力量。','寻找真正互补的同盟。',
+        '以小步积累势能，不宜过早扩张。','保持礼与边界，靠近风险但不轻慢。','天地交而万物通，连接分散资源。','沟通阻塞，先恢复真实反馈。',
+        '跨越差异建立共同目标。','资源充足时更需要节制。','降低姿态反而获得更大空间。','气势已成，避免乐观替代准备。',
+        '顺势而动，但不要失去原则。','修复旧问题，根因比表象更重要。','机会正在靠近，主动迎接而非等待。','退一步观察全局，模式会浮现。',
+        '必须做出清楚裁决。','形式服务于本质，别让包装取代内容。','旧结构正在剥落，先保住核心。','微小复苏已经开始，保护它。',
+        '减少妄动，以真实回应世界。','积蓄能力，为更大的承担做准备。','管理输入，精神食粮决定判断。','负荷超过常态，需要新的支撑结构。',
+        '进入险境时，稳定节律胜过爆发。','清晰可见，也要防止过度燃烧。','相互感应，关系是主要变量。','持续比激烈更有力量。',
+        '暂退以保存主动权。','力量上升，克制决定它是建设还是破坏。','光明正在上升，适合公开推进。','保护火种，不必向所有人证明自己。',
+        '先处理内部秩序，再谈外部扩张。','差异不会消失，需要设计共存方式。','前路受阻，转身寻找新的支点。','束缚正在解除，尽快处理后续。',
+        '主动减少，换取系统健康。','投入会产生复利，但方向必须正确。','决断已到门前，公开而不暴烈。','新的变量突然进入，保持边界。',
+        '资源聚集，建立共同承诺。','稳步上升，根基不能跳过。','限制揭示真正重要的资源。','更新基础设施，而非只救眼前。',
+        '规则必须更新，变革要有合法性。','把新秩序铸成可重复的形式。','外部震动唤醒内部行动。','停止是为了重新确定方向。',
+        '渐进最稳，急于抵达会破坏关系。','承诺需要匹配位置与责任。','成果丰盛，准备管理随之而来的复杂性。','身处过渡期，轻装与清醒最重要。',
+        '以柔性渗透阻力。','通过交流释放紧张。','分散之后重新建立连接。','设置限制，才能保存能量。',
+        '诚信是跨越不确定性的桥。','小幅校正优于巨大冒险。','事情接近完成，最需防止松懈。','尚未完成，保留继续调整的余地。'
+      ];
+      const zodiac = [
+        ['摩羯','土','把愿景变成可执行结构'],['水瓶','风','用新规则替代旧惯性'],['双鱼','水','让感受成为信息而非命令'],['白羊','火','把第一步变得明确'],
+        ['金牛','土','稳定资源并坚持复利'],['双子','风','重新定义问题与叙事'],['巨蟹','水','保护真正重要的关系'],['狮子','火','公开承担并形成号召'],
+        ['处女','土','通过细节降低不确定性'],['天秤','风','找到交换中的公平'],['天蝎','水','直面隐藏的权力与欲望'],['射手','火','扩大视野但验证假设']
+      ];
+      const themes = [
+        ['守中破局','先稳定核心，再打破一个关键限制'],['减法生势','停止分散消耗，力量会迅速回流'],['借力成局','答案藏在协作结构，而非个人硬撑'],['换轨重启','旧路径已经见顶，需要改变规则'],
+        ['慢即是快','延迟承诺，换取更高质量的信息'],['公开见光','把模糊问题说清楚，机会才会进入'],['边界聚能','明确拒绝什么，真正的选择才会出现'],['先难后易','先处理最不舒服的节点，系统自然顺畅']
+      ];
+      const focusCopy = {
+        career: ['事业','把精力压到一个可积累的能力上','完成一次清晰的取舍','让新方向形成稳定产出'],
+        relationship: ['关系','停止猜测，先确认彼此真实需求','进行一次不绕弯的对话','用连续行动重建安全感'],
+        wealth: ['财富','整理现金流与隐性成本','只为经过验证的机会下注','建立自动化储备与复盘'],
+        wellbeing: ['身心','恢复睡眠、运动与信息边界','移除一个持续消耗源','把有效节律固定下来'],
+        change: ['转变','清理旧身份留下的负担','选择一个新的落点或角色','建立与新环境的长期连接']
+      };
+      const directionByKua = {
+        1:['北','流动与信息'],2:['西南','承载与协作'],3:['东','启动与行动'],4:['东南','渗透与成长'],
+        6:['西北','规则与贵人'],7:['西','表达与交换'],8:['东北','积累与学习'],9:['南','可见度与声誉']
+      };
+      let salt = 0;
+      let state = null;
+      let selected = 'iching';
+
+      function hashText(text) {
+        let h = 2166136261;
+        for (let i = 0; i < text.length; i++) {
+          h ^= text.charCodeAt(i);
+          h = Math.imul(h, 16777619);
+        }
+        return h >>> 0;
+      }
+      function rngFrom(seed) {
+        return () => {
+          let t = seed += 0x6D2B79F5;
+          t = Math.imul(t ^ t >>> 15, t | 1);
+          t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+          return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+      }
+      function mod(n, m) { return ((n % m) + m) % m; }
+      function reduceDigit(n) {
+        let x = Math.abs(n);
+        while (x > 9) x = String(x).split('').reduce((sum, d) => sum + Number(d), 0);
+        return x || 9;
+      }
+      function jdn(y, m, d) {
+        const a = Math.floor((14 - m) / 12);
+        const yy = y + 4800 - a;
+        const mm = m + 12 * a - 3;
+        return d + Math.floor((153 * mm + 2) / 5) + 365 * yy + Math.floor(yy / 4) - Math.floor(yy / 100) + Math.floor(yy / 400) - 32045;
+      }
+      function ganzhi(index) { return stems[mod(index,10)] + branches[mod(index,12)]; }
+      function solarMonthIndex(month, day) {
+        const boundaries = [4,6,6,5,6,6,7,8,8,8,7,7];
+        let idx = mod(month - 2, 12);
+        if (day < boundaries[month - 1]) idx = mod(idx - 1, 12);
+        return idx;
+      }
+      function pillarsFor(date, time) {
+        const [y,m,d] = date.split('-').map(Number);
+        const [hour] = time.split(':').map(Number);
+        const effectiveYear = (m < 2 || (m === 2 && d < 4)) ? y - 1 : y;
+        const yearIndex = mod(effectiveYear - 4, 60);
+        const yearStem = mod(yearIndex, 10);
+        const monthIndex = solarMonthIndex(m,d);
+        const monthStem = mod(yearStem * 2 + 2 + monthIndex, 10);
+        const monthBranch = mod(2 + monthIndex, 12);
+        const dayIndex = mod(jdn(y,m,d) + 49, 60);
+        const dayStem = mod(dayIndex, 10);
+        const hourBranch = mod(Math.floor((hour + 1) / 2), 12);
+        const hourStem = mod(dayStem * 2 + hourBranch, 10);
+        const chars = [yearStem, mod(yearIndex,12), monthStem, monthBranch, dayStem, mod(dayIndex,12), hourStem, hourBranch];
+        const elements = [stemElements[yearStem],branchElements[mod(yearIndex,12)],stemElements[monthStem],branchElements[monthBranch],stemElements[dayStem],branchElements[mod(dayIndex,12)],stemElements[hourStem],branchElements[hourBranch]];
+        const counts = {木:0,火:0,土:0,金:0,水:0};
+        elements.forEach(e => counts[e]++);
+        const strongest = Object.keys(counts).sort((a,b) => counts[b]-counts[a])[0];
+        const weakest = Object.keys(counts).sort((a,b) => counts[a]-counts[b])[0];
+        return {
+          text: `${ganzhi(yearIndex)} · ${stems[monthStem]+branches[monthBranch]} · ${ganzhi(dayIndex)} · ${stems[hourStem]+branches[hourBranch]}`,
+          dayMaster: stemElements[dayStem], strongest, weakest, hourBranch, month: m
+        };
+      }
+      function zodiacFor(month, day) {
+        const cutoffs = [20,19,21,20,21,22,23,23,23,24,23,22];
+        let idx = month - 1;
+        if (day < cutoffs[month - 1]) idx = mod(idx - 1, 12);
+        return zodiac[idx];
+      }
+      function kuaFor(year, gender, seed) {
+        const sum = reduceDigit(String(year).split('').reduce((a,b)=>a+Number(b),0));
+        const mode = gender === 'neutral' ? (seed % 2 ? 'female' : 'male') : gender;
+        let k;
+        if (year < 2000) k = mode === 'male' ? 10 - sum : 5 + sum;
+        else k = mode === 'male' ? 9 - sum : 6 + sum;
+        k = reduceDigit(k);
+        if (k === 5) k = mode === 'male' ? 2 : 8;
+        return k;
+      }
+      function formatWindow(date) {
+        return `${date.getMonth()+1}月${date.getDate()}日前后`;
+      }
+      function getInput() {
+        return {
+          date: $('#ose-birth-date').value || '1992-08-17',
+          time: $('#ose-birth-time').value || '09:30',
+          gender: $('#ose-gender').value,
+          focus: $('#ose-focus').value,
+          question: $('#ose-question').value.trim() || '未来三个月最值得关注什么'
+        };
+      }
+      function buildState() {
+        const input = getInput();
+        const seed = hashText(`${input.date}|${input.time}|${input.gender}|${input.focus}|${input.question}|${salt}`);
+        const rng = rngFrom(seed);
+        const [year,month,day] = input.date.split('-').map(Number);
+        const pillars = pillarsFor(input.date,input.time);
+        const sign = zodiacFor(month,day);
+        const kua = kuaFor(year,input.gender,seed);
+        const direction = directionByKua[kua];
+        const theme = themes[Math.floor(rng()*themes.length)];
+        const hexIndex = Math.floor(rng()*64);
+        const changingLine = 1 + Math.floor(rng()*6);
+        const tarotCards = [0,1,2].map(() => {
+          const card = tarot[Math.floor(rng()*tarot.length)];
+          const reversed = rng() < 0.22;
+          return { card, reversed };
+        });
+        const star = stars[Math.floor(rng()*stars.length)];
+        const palace = branches[mod(2 + pillars.month - pillars.hourBranch,12)];
+        const tuibeiNo = 1 + Math.floor(rng()*60);
+        const scores = systems.map((_,i) => {
+          const coherence = (hashText(theme[0] + systems[i].id + input.focus) % 13);
+          return 63 + coherence + Math.floor(rng()*18);
+        });
+        const sorted = [...scores].sort((a,b)=>b-a);
+        const overall = Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
+        const agreement = Math.max(4, Math.min(8, Math.round(4 + (sorted[3]-63)/6)));
+        const now = new Date();
+        const offset = 18 + (seed % 34);
+        const windowDate = new Date(now.getFullYear(),now.getMonth(),now.getDate()+offset);
+        const focus = focusCopy[input.focus];
+        const lifeCell = kua;
+        const result = {
+          input,seed,pillars,sign,kua,direction,theme,hexIndex,changingLine,tarotCards,star,palace,tuibeiNo,scores,overall,agreement,windowDate,lifeCell,focus,
+          details: {}
+        };
+        const primaryTarot = tarotCards[1];
+        result.details.tarot = {
+          glyph: primaryTarot.card[2],
+          title: `塔罗 · ${primaryTarot.card[0]}${primaryTarot.reversed?'（逆位）':''}`,
+          text: `${tarotCards.map((x,i)=>`${['根源','当下','建议'][i]}：${x.card[0]}${x.reversed?'逆位':''}`).join('；')}。${primaryTarot.card[1]}`
+        };
+        result.details.ziwei = {
+          glyph: '紫', title: `紫微象盘 · ${star}入${palace}位`,
+          text: `${starMessages[star]} 当前主题落在“${focus[0]}”，宜用结构化承诺代替情绪化加码。`
+        };
+        result.details.iching = {
+          glyph: String.fromCodePoint(0x4DC0 + hexIndex), title: `周易 · ${hexagrams[hexIndex]}卦 · 第${changingLine}爻动`,
+          text: `${hexMessages[hexIndex]} 合参落点是“${theme[0]}”：${theme[1]}。`
+        };
+        result.details.luoshu = {
+          glyph: String(kua), title: `洛书 · 命卦 ${kua} · ${direction[0]}方`,
+          text: `${direction[0]}象征“${direction[1]}”。把最重要的${focus[0]}行动放在这个方位或对应时段，用环境提醒强化选择。`
+        };
+        result.details.tuibei = {
+          glyph: `象${tuibeiNo}`, title: `推背象序 · 第 ${tuibeiNo} 象`,
+          text: `时代隐喻指向“旧秩序让位于新接口”。这不是复刻原谶，而是借六十象结构提醒：个人选择必须顺应更大的周期变化。`
+        };
+        result.details.bazi = {
+          glyph: pillars.dayMaster, title: `四柱 · 日主${pillars.dayMaster} · ${pillars.strongest}旺${pillars.weakest}弱`,
+          text: `${pillars.text}。当前策略宜借${pillars.weakest}的象征能力补偏：少靠惯性，多用${theme[1]}。`
+        };
+        result.details.zodiac = {
+          glyph: sign[0].slice(0,1), title: `星座 · ${sign[0]} · ${sign[1]}象`,
+          text: `本命太阳主题是“${sign[2]}”。九十日内不要只强化熟悉优势，要让它服务于${focus[0]}的具体结果。`
+        };
+        result.details.fengshui = {
+          glyph: direction[0], title: `风水 · ${direction[0]}方启用`,
+          text: `清理${direction[0]}方的停滞物，放置一个与你的${focus[0]}目标直接相关、可持续使用的物件；重点是形成行动线索，不是摆设本身。`
+        };
+        return result;
+      }
+      function polar(angle,radius) {
+        return [cx + Math.cos(angle)*radius, cy + Math.sin(angle)*radius];
+      }
+      function sectorPath(i,inner,outer) {
+        const a0 = -Math.PI/2 + i*Math.PI/4 - Math.PI/8;
+        const a1 = a0 + Math.PI/4;
+        const p0=polar(a0,outer),p1=polar(a1,outer),p2=polar(a1,inner),p3=polar(a0,inner);
+        return `M${p0[0]},${p0[1]} A${outer},${outer} 0 0 1 ${p1[0]},${p1[1]} L${p2[0]},${p2[1]} A${inner},${inner} 0 0 0 ${p3[0]},${p3[1]} Z`;
+      }
+      function makeChart() {
+        const sectors = $('#ose-sectors');
+        const grid = $('#ose-grid');
+        systems.forEach((system,i) => {
+          const path = document.createElementNS(svgNS,'path');
+          path.setAttribute('class','ose-sector');
+          path.setAttribute('data-system',system.id);
+          path.setAttribute('d',sectorPath(i,190,232));
+          sectors.appendChild(path);
+          const a = -Math.PI/2 + i*Math.PI/4;
+          const [x,y] = polar(a,180);
+          const line = document.createElementNS(svgNS,'line');
+          line.setAttribute('class','ose-spoke'); line.setAttribute('x1',cx); line.setAttribute('y1',cy); line.setAttribute('x2',x); line.setAttribute('y2',y);
+          grid.appendChild(line);
+        });
+        [60,100,140,180].forEach(r => {
+          const circle = document.createElementNS(svgNS,'circle');
+          circle.setAttribute('class','ose-ring'); circle.setAttribute('cx',cx); circle.setAttribute('cy',cy); circle.setAttribute('r',r);
+          grid.appendChild(circle);
+        });
+      }
+      function drawLuoshu(lifeCell) {
+        const g = $('#ose-luoshu');
+        g.replaceChildren();
+        const nums = [4,9,2,3,5,7,8,1,6];
+        nums.forEach((n,i)=>{
+          const col=i%3,row=Math.floor(i/3),x=cx-27+col*18,y=cy-10+row*18;
+          const rect=document.createElementNS(svgNS,'rect');
+          rect.setAttribute('class',`ose-luoshu-cell${n===lifeCell?' is-life':''}`);
+          rect.setAttribute('x',x-8);rect.setAttribute('y',y-12);rect.setAttribute('width',16);rect.setAttribute('height',16);
+          g.appendChild(rect);
+          const text=document.createElementNS(svgNS,'text');
+          text.setAttribute('class','ose-grid-number text-small');text.setAttribute('x',x);text.setAttribute('y',y);text.setAttribute('text-anchor','middle');text.textContent=n;
+          g.appendChild(text);
+        });
+      }
+      function radarPoints(scores) {
+        return scores.map((score,i)=>{
+          const a=-Math.PI/2+i*Math.PI/4;
+          return polar(a,40+(score/100)*130).map(v=>v.toFixed(1)).join(',');
+        }).join(' ');
+      }
+      function renderChart(animate=true) {
+        const target = state.scores;
+        const previous = ($('#ose-radar-line').dataset.scores || target.join(',')).split(',').map(Number);
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const renderFrame = scores => {
+          const points=radarPoints(scores);
+          $('#ose-radar-fill').setAttribute('points',points);
+          $('#ose-radar-line').setAttribute('points',points);
+          const dots=$('#ose-radar-dots');dots.replaceChildren();
+          scores.forEach((score,i)=>{
+            const a=-Math.PI/2+i*Math.PI/4;const [x,y]=polar(a,40+(score/100)*130);
+            const c=document.createElementNS(svgNS,'circle');c.setAttribute('class','ose-radar-dot');c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',4);dots.appendChild(c);
+          });
+        };
+        if(!animate||reduce){renderFrame(target);}
+        else{
+          const start=performance.now();
+          const tick=now=>{const t=Math.min(1,(now-start)/480);const e=t*t*(3-2*t);renderFrame(target.map((v,i)=>previous[i]+(v-previous[i])*e));if(t<1)requestAnimationFrame(tick);};
+          requestAnimationFrame(tick);
+        }
+        $('#ose-radar-line').dataset.scores=target.join(',');
+        const labels=$('#ose-labels');labels.replaceChildren();
+        systems.forEach((system,i)=>{
+          const a=-Math.PI/2+i*Math.PI/4;const [x,y]=polar(a,263);
+          const text=document.createElementNS(svgNS,'text');text.setAttribute('class','ose-label');text.setAttribute('x',x);text.setAttribute('y',y-4);text.setAttribute('text-anchor','middle');text.textContent=system.label;labels.appendChild(text);
+          const sub=document.createElementNS(svgNS,'text');sub.setAttribute('class','ose-label-sub text-small');sub.setAttribute('x',x);sub.setAttribute('y',y+15);sub.setAttribute('text-anchor','middle');sub.textContent=`${system.pair} · ${state.scores[i]}`;labels.appendChild(sub);
+        });
+        root.querySelectorAll('.ose-sector').forEach(el=>el.classList.toggle('is-active',el.dataset.system===selected));
+        drawLuoshu(state.lifeCell);
+      }
+      function renderNav() {
+        const nav=$('#ose-system-nav');nav.replaceChildren();
+        systems.forEach(system=>{
+          const button=document.createElement('button');button.type='button';button.className=`btn${system.id===selected?' is-selected':''}`;button.setAttribute('aria-pressed',system.id===selected?'true':'false');button.dataset.system=system.id;button.textContent=system.label;
+          button.addEventListener('click',()=>{selected=system.id;renderDetail();renderNav();renderChart(false);});
+          nav.appendChild(button);
+        });
+      }
+      function renderDetail() {
+        const d=state.details[selected];
+        $('#ose-detail-glyph').textContent=d.glyph;$('#ose-detail-title').textContent=d.title;$('#ose-detail-text').textContent=d.text;
+      }
+      function renderAll(animate=true) {
+        state=buildState();
+        $('#ose-overall').textContent=state.overall;
+        $('#ose-overall-note').textContent=state.theme[1];
+        $('#ose-window').textContent=formatWindow(state.windowDate);
+        $('#ose-window-note').textContent=`适合推进${state.focus[0]}中的关键选择`;
+        $('#ose-consensus').textContent=state.theme[0];
+        $('#ose-consensus-note').textContent=`${state.agreement} / 8 体系指向同一课题`;
+        $('#ose-center-value').textContent=state.overall;
+        $('#ose-center-theme').textContent=state.theme[0];
+        $('#ose-pillars').textContent=`四柱：${state.pillars.text}`;
+        $('#ose-seed-badge').textContent=`可复现象数 · ${String(state.seed).slice(-6)}`;
+        $('#ose-phase-1-title').textContent=`第 1—30 日 · ${['收束','蓄势','清理'][state.seed%3]}`;
+        $('#ose-phase-1-text').textContent=state.focus[1]+'。';
+        $('#ose-phase-2-title').textContent=`第 31—60 日 · ${state.theme[0]}`;
+        $('#ose-phase-2-text').textContent=`${formatWindow(state.windowDate)}，${state.focus[2]}。`;
+        $('#ose-phase-3-title').textContent=`第 61—90 日 · ${['定势','扩展','落地'][(state.seed>>>3)%3]}`;
+        $('#ose-phase-3-text').textContent=state.focus[3]+'。';
+        renderChart(animate);renderNav();renderDetail();
+        $('#ose-report').hidden=true;
+      }
+      function renderDeepReport() {
+        const d=state;
+        const primaryTarot=d.tarotCards[1].card[0];
+        const focus=d.focus[0];
+        $('#ose-report-title').textContent=`${focus} · 九十日深度合参`;
+        $('#ose-report-lead').textContent=`八个体系的主要交集是“${d.theme[0]}”。这不是吉凶判决，而是一条待验证的决策线索：${d.theme[1]}。`;
+        $('#ose-report-consensus').textContent=`${hexagrams[d.hexIndex]}卦强调变化边界，塔罗“${primaryTarot}”呈现当前心理动力，四柱以${d.pillars.dayMaster}为日主、${d.pillars.strongest}旺${d.pillars.weakest}弱；${d.agreement}个体系共同指向“${d.theme[0]}”，其余象征仅作旁证。`;
+        $('#ose-report-hypothesis').textContent=`你当前在${focus}上的主要阻力，并非机会不足，而是一个未被明确命名的限制正在分散注意力。用14天时间减少一项旧承诺；若专注时间和外部反馈没有改善，就推翻这个假设。`;
+        $('#ose-report-action').textContent=`先完成“${d.focus[1]}”，再于${formatWindow(d.windowDate)}前后“${d.focus[2]}”，最后“${d.focus[3]}”。只保留一个能够获得真实反馈的主实验。`;
+        $('#ose-report-stop').textContent=`到第45天，如果没有获得至少两种可观察证据——真实付费、明确合作承诺、持续使用或可重复产出——停止追加资源，返回问题定义阶段。`;
+        const report=$('#ose-report');report.hidden=false;
+        report.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+      }
+      makeChart();
+      ['#ose-birth-date','#ose-birth-time','#ose-gender','#ose-focus'].forEach(sel=>$(sel).addEventListener('change',()=>{salt=0;renderAll(true);}));
+      $('#ose-question').addEventListener('change',()=>{salt=0;renderAll(true);});
+      $('#ose-redraw').addEventListener('click',()=>{salt++;renderAll(true);});
+      $('#ose-read').addEventListener('click',renderDeepReport);
+      renderAll(false);
+      if(window.lucide)window.lucide.createIcons({attrs:{width:16,height:16}});
+    })();
+  </script>
+</section>
+
+<script src="https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js"></script>
+<script src="https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js"></script>
+<script>
+(() => {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set(["top", "right", "bottom", "left"]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+
+  const getTrigger = (target) =>
+    target?.nodeType === Node.ELEMENT_NODE
+      ? target.closest("[data-tooltip]")
+      : null;
+  const containsTarget = (trigger, target) =>
+    target?.nodeType != null && trigger.contains(target);
+  const getContent = (trigger) =>
+    trigger.getAttribute("data-tooltip")?.trim() ?? "";
+  const getPlacement = (trigger) => {
+    const placement = trigger.getAttribute("data-tooltip-placement");
+    return tooltipPlacements.has(placement) ? placement : "top";
+  };
+  const getTooltip = () => {
+    if (tooltip == null) {
+      tooltip = document.createElement("div");
+      tooltip.id = tooltipId;
+      tooltip.className = "tooltip";
+      tooltip.setAttribute("role", "tooltip");
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) => {
+    const ids = new Set(
+      (trigger.getAttribute("aria-describedby") ?? "")
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute("aria-describedby");
+    } else {
+      trigger.setAttribute("aria-describedby", [...ids].join(" "));
+    }
+  };
+  const clearOpenTimeout = () => {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) => {
+    clearOpenTimeout();
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) => {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              "--tooltip-available-width",
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              "--tooltip-available-height",
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: "fixed",
+    })
+      .then(({ x, y }) => {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = "visible";
+      })
+      .catch(() => {
+        if (activeTrigger === trigger && request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) => {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = "hidden";
+    floating.style.transform = "translate(0, 0)";
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () => {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) => {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() < skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() => {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) => {
+    if (event.pointerType === "touch") {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handleLeave = (event) => {
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) => {
+    const trigger = getTrigger(event.target);
+    if (trigger?.matches(":focus-visible")) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) => {
+    if (event.key === "Escape") {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) => {
+    const trigger = getTrigger(event.target);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const destroy = () => {
+    closeTooltip(false);
+    document.removeEventListener("pointerover", handlePointerOpen);
+    document.removeEventListener("pointerout", handleLeave);
+    document.removeEventListener("focusin", handleFocusIn);
+    document.removeEventListener("focusout", handleLeave);
+    document.removeEventListener("keydown", handleKeyDown);
+    document.removeEventListener("contextmenu", handleContextMenu);
+    tooltip = null;
+  };
+
+  document.addEventListener("pointerover", handlePointerOpen);
+  document.addEventListener("pointerout", handleLeave);
+  document.addEventListener("focusin", handleFocusIn);
+  document.addEventListener("focusout", handleLeave);
+  document.addEventListener("keydown", handleKeyDown);
+  document.addEventListener("contextmenu", handleContextMenu);
+  window.addEventListener("pagehide", destroy, { once: true });
+})();
+</script>
+<script id="codex-visualization-lucide" async src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js"></script>
+<script>
+(() => {
+  const initialize = () => {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById("codex-visualization-lucide")
+    ?.addEventListener("load", initialize, { once: true });
+})();
+</script>
+
+</body>
+</html>
