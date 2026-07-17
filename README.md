@@ -2,6 +2,8 @@
 
 一个可复现的象征性合参工具，将塔罗、紫微象盘、周易、洛书、推背象序、四柱、星座与风水映射到同一张八维罗盘，并生成未来 90 天的行动建议。
 
+[在线体验](https://oracle-synthesis-engine.vercel.app) · [GitHub 仓库](https://github.com/porembastellpflug385-png/oracle-synthesis-engine)
+
 ## 特点
 
 - 输入出生日期、时间、传统命卦取法与当前问题
