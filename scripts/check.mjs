@@ -7,7 +7,10 @@ const required = [
   'id="ose-chart"',
   'id="ose-redraw"',
   'id="ose-read"',
+  'id="ose-birth-city"',
   'id="ose-horizon"',
+  'id="ose-cast-guidance"',
+  'id="ose-cast-trace"',
   'id="ose-report"',
   'id="ose-report-audit"',
   'id="ose-consensus-table"',
@@ -39,6 +42,10 @@ for (const source of scripts) {
 
 if (/window\.openai|sendFollowUpMessage/.test(html)) {
   throw new Error('Host-only Codex APIs must not appear in the standalone build.');
+}
+
+if (/Math\.floor\(rng\(\)\*64\)|stars\[Math\.floor/.test(html)) {
+  throw new Error('Seeded placeholder divination must not return in strict mode.');
 }
 
 console.log(`Validated ${scripts.length} inline scripts, ${required.length} UI contracts, and ${horizonValues.length} prediction horizons.`);
