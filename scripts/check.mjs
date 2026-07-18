@@ -32,6 +32,18 @@ if (missingHorizons.length) {
   throw new Error(`Missing prediction horizons: ${missingHorizons.join(', ')}`);
 }
 
+const strictSystems = ['tarot', 'iching', 'runes', 'bazi', 'luoshu', 'zodiac', 'chinese_zodiac', 'numerology', 'planetary'];
+const missingSystems = strictSystems.filter(
+  (value) => !html.includes(`id: '${value}'`),
+);
+if (missingSystems.length) {
+  throw new Error(`Missing strict systems: ${missingSystems.join(', ')}`);
+}
+
+if (/id: '(?:ziwei|tuibei|fengshui)'/.test(html)) {
+  throw new Error('Uncomputed placeholder systems must not return.');
+}
+
 const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)]
   .map((match) => match[1])
   .filter((source) => source.trim());
@@ -48,4 +60,4 @@ if (/Math\.floor\(rng\(\)\*64\)|stars\[Math\.floor/.test(html)) {
   throw new Error('Seeded placeholder divination must not return in strict mode.');
 }
 
-console.log(`Validated ${scripts.length} inline scripts, ${required.length} UI contracts, and ${horizonValues.length} prediction horizons.`);
+console.log(`Validated ${scripts.length} inline scripts, ${required.length} UI contracts, ${horizonValues.length} horizons, and ${strictSystems.length} strict systems.`);

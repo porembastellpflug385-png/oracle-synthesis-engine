@@ -1224,7 +1224,7 @@ html>body{
     }
     #oracle-synthesis-engine .ose-system-nav {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0.5rem;
       margin: 1rem 0;
       padding: 0.45rem;
@@ -1755,7 +1755,7 @@ html>body{
     <div>
       <div class="ose-kicker text-small"><span class="ose-live-dot"></span>Oracle OS · Synthesis Core</div>
       <h1>万象合参罗盘</h1>
-      <p>八种文明术数，共同寻找一个可验证的行动方向。</p>
+      <p>九种文明术数，共同寻找一个可验证的行动方向。</p>
     </div>
     <div class="ose-session text-small">
       <span>SESSION</span>
@@ -1781,8 +1781,8 @@ html>body{
       <input class="form-control" id="ose-birth-city" type="text" maxlength="40" autocomplete="address-level2" value="上海" placeholder="例如：上海">
     </label>
     <label class="form-label" for="ose-gender">命卦取法
-      <select class="form-select" id="ose-gender">
-        <option value="neutral">不设定性别</option>
+      <select class="form-select" id="ose-gender" required>
+        <option value="" selected disabled>请选择传统取法</option>
         <option value="female">女命传统取法</option>
         <option value="male">男命传统取法</option>
       </select>
@@ -1841,8 +1841,8 @@ html>body{
     </div>
     <div class="card viz-stat">
       <span class="text-muted">有效体系</span>
-      <span class="viz-stat-value" id="ose-consensus">— / 8</span>
-      <span class="text-small text-muted" id="ose-consensus-note">资料不足的不参与结论</span>
+      <span class="viz-stat-value" id="ose-consensus">— / 9</span>
+      <span class="text-small text-muted" id="ose-consensus-note">填写取法并起卦后全部就绪</span>
     </div>
   </div>
 
@@ -1859,12 +1859,12 @@ html>body{
 
   <div class="ose-chart-wrap">
     <div class="ose-chart-caption text-small">
-      <span><strong>八体系计算完备度</strong>仅显示实际计算、真实抽取或资料缺失状态</span>
+      <span><strong>九体系计算完备度</strong>规则计算与真实抽取的来源状态</span>
       <span class="ose-chart-status"><span class="ose-live-dot"></span> STRICT MODE</span>
     </div>
     <svg class="ose-chart" id="ose-chart" viewBox="0 0 960 560" role="img" aria-labelledby="ose-svg-title ose-svg-desc">
-      <title id="ose-svg-title">八大术数合参罗盘</title>
-      <desc id="ose-svg-desc">八个方向分别显示塔罗、紫微斗数、周易、洛书、推背象序、四柱、星座与风水的计算完备度。</desc>
+      <title id="ose-svg-title">九大术数合参罗盘</title>
+      <desc id="ose-svg-desc">九个方向分别显示塔罗、周易、北欧符文、四柱、洛书、太阳星座、生肖干支、生命灵数与七曜的计算完备度。</desc>
       <g id="ose-sectors"></g>
       <g id="ose-grid"></g>
       <polygon class="ose-radar-fill" id="ose-radar-fill"></polygon>
@@ -1913,7 +1913,7 @@ html>body{
       </div>
       <div class="ose-report-meta" aria-label="报告元数据">
         <span id="ose-report-id">REPORT #000000</span>
-        <span id="ose-report-scope">8 体系 · 象征性</span>
+        <span id="ose-report-scope">9 体系 · 象征性</span>
       </div>
     </header>
 
@@ -2031,13 +2031,14 @@ html>body{
       const cx = 480, cy = 280;
       const systems = [
         { id: 'tarot', label: '塔罗', pair: '潜意识' },
-        { id: 'ziwei', label: '紫微', pair: '人生结构' },
         { id: 'iching', label: '周易', pair: '变化法则' },
-        { id: 'luoshu', label: '洛书', pair: '数理方位' },
-        { id: 'tuibei', label: '推背象序', pair: '时代隐喻' },
+        { id: 'runes', label: '北欧符文', pair: '原型提示' },
         { id: 'bazi', label: '四柱', pair: '五行节律' },
-        { id: 'zodiac', label: '星座', pair: '人格动力' },
-        { id: 'fengshui', label: '风水', pair: '空间行动' }
+        { id: 'luoshu', label: '洛书', pair: '数理方位' },
+        { id: 'zodiac', label: '太阳星座', pair: '人格动力' },
+        { id: 'chinese_zodiac', label: '生肖干支', pair: '岁时象征' },
+        { id: 'numerology', label: '生命灵数', pair: '数字原型' },
+        { id: 'planetary', label: '七曜', pair: '生日曜星' }
       ];
       const stems = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
       const branches = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
@@ -2068,6 +2069,28 @@ html>body{
         ...minorSuitThemes.flatMap(([suit,theme,glyph])=>minorRanks.map(([rank,message])=>[
           `${suit}${rank}`,`${suit}对应${theme}。${message}`,glyph
         ]))
+      ];
+      const elderFuthark = [
+        ['ᚠ','Fehu','资源流动与可持续交换'],['ᚢ','Uruz','生命力、耐力与原始推动'],['ᚦ','Thurisaz','阻力、边界与谨慎回应'],
+        ['ᚨ','Ansuz','信息、语言与值得倾听的信号'],['ᚱ','Raidho','路径、秩序与正确节奏'],['ᚲ','Kenaz','照明、技艺与问题显影'],
+        ['ᚷ','Gebo','互惠、礼物与对等承诺'],['ᚹ','Wunjo','和谐、归属与共享成果'],['ᚺ','Hagalaz','中断、失控变量与结构重组'],
+        ['ᚾ','Nauthiz','必要性、匮乏与纪律'],['ᛁ','Isa','暂停、凝结与等待条件'],['ᛃ','Jera','周期、耕耘与自然回报'],
+        ['ᛇ','Eihwaz','韧性、轴心与长期转化'],['ᛈ','Perthro','未知、概率与隐藏变量'],['ᛉ','Algiz','保护、警觉与支持网络'],
+        ['ᛋ','Sowilo','清晰、整合与生命方向'],['ᛏ','Tiwaz','正义、责任与必要牺牲'],['ᛒ','Berkano','孕育、修复与渐进成长'],
+        ['ᛖ','Ehwaz','协作、移动与相互信任'],['ᛗ','Mannaz','自我认知、群体与共同智慧'],['ᛚ','Laguz','直觉、流动与情绪信息'],
+        ['ᛜ','Ingwaz','积蓄、完成与内在成熟'],['ᛞ','Dagaz','转折、觉醒与状态跃迁'],['ᛟ','Othala','继承、根基与长期资产']
+      ];
+      const zodiacAnimals=['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+      const lifePathMessages={
+        1:'独立、发起与自我定义',2:'协作、敏感与关系平衡',3:'表达、创造与社会连接',4:'结构、纪律与可靠建设',
+        5:'变化、自由与经验学习',6:'责任、照顾与价值承诺',7:'研究、内省与深层理解',8:'资源、权力与现实成果',
+        9:'整合、服务与周期完成',11:'直觉、启发与高敏感度',22:'把大型愿景转成现实结构',33:'教导、疗愈与无私责任'
+      };
+      const planetaryDays = [
+        ['日曜','太阳','可见度、创造与中心意识','☉'],['月曜','月亮','情绪、照料与周期感受','☽'],
+        ['火曜','火星','行动、竞争与边界','♂'],['水曜','水星','沟通、学习与交换','☿'],
+        ['木曜','木星','扩展、信念与机会','♃'],['金曜','金星','关系、审美与价值','♀'],
+        ['土曜','土星','责任、限制与长期结构','♄']
       ];
       const hexagrams = [
         '乾','坤','屯','蒙','需','讼','师','比','小畜','履','泰','否','同人','大有','谦','豫',
@@ -2275,10 +2298,16 @@ html>body{
           [deck[i],deck[j]]=[deck[j],deck[i]];
         }
         const tarotCards=deck.slice(0,3).map(index=>({card:tarot[index],reversed:secureInt(2)===1}));
+        const runeBag=Array.from({length:elderFuthark.length},(_,index)=>index);
+        for(let i=runeBag.length-1;i>0;i--){
+          const j=secureInt(i+1);
+          [runeBag[i],runeBag[j]]=[runeBag[j],runeBag[i]];
+        }
+        const runeDraws=runeBag.slice(0,3).map(index=>elderFuthark[index]);
         const idBuffer=new Uint32Array(1);window.crypto.getRandomValues(idBuffer);
         return {
           id:idBuffer[0].toString(16).padStart(8,'0').toUpperCase(),
-          createdAt:new Date(),lines,hexIndex,changedHexIndex,tarotCards,
+          createdAt:new Date(),lines,hexIndex,changedHexIndex,tarotCards,runeDraws,
           changingLines:lines.map((line,index)=>line.total===6||line.total===9?index+1:null).filter(Boolean)
         };
       }
@@ -2322,8 +2351,16 @@ html>body{
         const weakest = Object.keys(counts).sort((a,b) => counts[a]-counts[b])[0];
         return {
           text: `${ganzhi(yearIndex)} · ${stems[monthStem]+branches[monthBranch]} · ${ganzhi(dayIndex)} · ${stems[hourStem]+branches[hourBranch]}`,
-          dayMaster: stemElements[dayStem], strongest, weakest, hourBranch, month: m
+          dayMaster: stemElements[dayStem], strongest, weakest, hourBranch, month: m, yearIndex, yearStem, yearBranch:mod(yearIndex,12)
         };
+      }
+      function lifePathFor(date) {
+        let value=date.replace(/\D/g,'').split('').reduce((sum,digit)=>sum+Number(digit),0);
+        while(value>9&&![11,22,33].includes(value)) value=String(value).split('').reduce((sum,digit)=>sum+Number(digit),0);
+        return value;
+      }
+      function planetaryDayFor(year,month,day) {
+        return planetaryDays[new Date(Date.UTC(year,month-1,day)).getUTCDay()];
       }
       function zodiacFor(month, day) {
         const mmdd = month * 100 + day;
@@ -2342,7 +2379,7 @@ html>body{
         return zodiac[0];
       }
       function kuaFor(year, gender, seed) {
-        if (gender === 'neutral') return null;
+        if (!['female','male'].includes(gender)) return null;
         const sum = reduceDigit(String(year).split('').reduce((a,b)=>a+Number(b),0));
         const mode = gender;
         let k;
@@ -2438,6 +2475,11 @@ html>body{
         const [year,month,day] = input.date.split('-').map(Number);
         const pillars = pillarsFor(input.date,input.time);
         const sign = zodiacFor(month,day);
+        const lifePath=lifePathFor(input.date);
+        const planetaryDay=planetaryDayFor(year,month,day);
+        const animal=zodiacAnimals[pillars.yearBranch];
+        const yearElement=stemElements[pillars.yearStem];
+        const yearPolarity=pillars.yearStem%2===0?'阳':'阴';
         const kua = kuaFor(year,input.gender,seed);
         const direction = kua ? directionByKua[kua] : null;
         const horizon = horizons[input.horizon];
@@ -2446,17 +2488,18 @@ html>body{
         const changedHexIndex=cast?.changedHexIndex ?? hexIndex;
         const changingLine=cast?.changingLines[0] ?? null;
         const tarotCards=cast?.tarotCards ?? [];
+        const runeDraws=cast?.runeDraws ?? [];
         const theme=cast?themes[hexThemeIndices[hexIndex]]:['等待起卦','先确认问题，再进行一次正式起卦'];
-        const scores=[cast?100:0,0,cast?100:0,kua?80:0,0,input.city?70:55,35,0];
+        const scores=[cast?100:0,cast?100:0,cast?100:0,input.city?70:55,kua?80:0,35,80,100,100];
         const availability=[
-          cast?'真实抽牌':'待起卦','未计算',cast?'三钱起卦':'待起卦',kua?'已计算':'缺少传统性别取法',
-          '不参与个人测算',input.city?'近似排盘':'缺少城市','仅太阳星座','未计算'
+          cast?'真实抽牌':'待起卦',cast?'三钱起卦':'待起卦',cast?'真实抽取':'待起卦',input.city?'近似排盘':'缺少城市',
+          kua?'已计算':'请选择取法','仅太阳星座','按年柱计算','已计算','按公历计算'
         ];
         const activeCount=scores.filter(score=>score>0).length;
         const overall=Math.round(scores.reduce((sum,score)=>sum+score,0)/scores.length);
         const lifeCell = kua;
         const result = {
-          input,seed,cast,pillars,sign,kua,direction,theme,hexIndex,changedHexIndex,changingLine,tarotCards,scores,availability,overall,activeCount,horizon,lifeCell,focus,
+          input,seed,cast,pillars,sign,lifePath,planetaryDay,animal,yearElement,yearPolarity,kua,direction,theme,hexIndex,changedHexIndex,changingLine,tarotCards,runeDraws,scores,availability,overall,activeCount,horizon,lifeCell,focus,
           details: {}
         };
         const primaryTarot = tarotCards[1];
@@ -2465,34 +2508,38 @@ html>body{
           title: `塔罗 · ${primaryTarot.card[0]}${primaryTarot.reversed?'（逆位）':''}`,
           text: `${tarotCards.map((x,i)=>`${['根源','当下','建议'][i]}：${x.card[0]}${x.reversed?'逆位':''}`).join('；')}。三张牌来自完整牌组的安全随机无重复抽取。`
         } : {glyph:'—',title:'塔罗 · 尚未抽牌',text:'点击“正式起卦”后，系统会同时从完整牌组中无重复抽取三张牌。'};
-        result.details.ziwei = {
-          glyph: '紫', title: '紫微斗数 · 未计算',
-          text: '当前版本尚未实现完整农历、闰月、命宫身宫与十四主星安置规则，因此严格模式不生成随机主星，也不让紫微参与合参。'
-        };
         result.details.iching = cast ? {
           glyph: String.fromCodePoint(0x4DC0 + hexIndex),
           title: `周易 · ${hexagrams[hexIndex]}卦${cast.changingLines.length?` → ${hexagrams[changedHexIndex]}卦`:' · 无动爻'}`,
           text: `六次三钱投掷（自下而上）为 ${cast.lines.map(line=>line.total).join('、')}；${cast.changingLines.length?`第 ${cast.changingLines.join('、')} 爻动。`:'没有老阴或老阳。'}${hexMessages[hexIndex]}`
         } : {glyph:'—',title:'周易 · 尚未起卦',text:'确认问题后点击“正式起卦”，系统将进行六次三钱投掷并保留每一次的硬币结果。'};
-        result.details.luoshu = kua ? {
-          glyph: String(kua), title: `洛书 · 命卦 ${kua} · ${direction[0]}方`,
-          text: `命卦按出生年与所选传统性别取法计算。${direction[0]}象征“${direction[1]}”；它是传统方位参考，不是事件预测。`
-        } : {glyph:'—',title:'洛书 · 未计算',text:'传统命卦公式区分男女取法；当前选择“不设定性别”，严格模式不会用随机数代替。'};
-        result.details.tuibei = {
-          glyph: '象', title: '推背图 · 不参与个人测算',
-          text: '推背图并非依据个人出生信息排盘的体系。严格模式不随机选择象序，只保留为可选的历史文化阅读。'
-        };
+        result.details.runes = cast ? {
+          glyph:runeDraws[1][0],title:`北欧符文 · ${runeDraws[1][1]}`,
+          text:`根源：${runeDraws[0][0]} ${runeDraws[0][1]}（${runeDraws[0][2]}）；当下：${runeDraws[1][0]} ${runeDraws[1][1]}（${runeDraws[1][2]}）；建议：${runeDraws[2][0]} ${runeDraws[2][1]}（${runeDraws[2][2]}）。三枚符文从24枚古弗萨克符文中安全随机、无重复抽取。`
+        } : {glyph:'—',title:'北欧符文 · 尚未抽取',text:'点击“正式起卦”后，系统会从24枚古弗萨克符文中无重复抽取三枚。'};
         result.details.bazi = {
           glyph: pillars.dayMaster, title: `四柱 · 日主${pillars.dayMaster} · ${pillars.strongest}旺${pillars.weakest}弱`,
           text: `${pillars.text}。出生城市记录为“${input.city||'未填写'}”；当前仍未接入城市经度、历史时区与真太阳时校正，所以只作为近似四柱结构，不做精确应期。`
         };
+        result.details.luoshu = kua ? {
+          glyph: String(kua), title: `洛书 · 命卦 ${kua} · ${direction[0]}方`,
+          text: `命卦按出生年与所选传统性别取法计算。${direction[0]}象征“${direction[1]}”；它是传统方位参考，不是事件预测。`
+        } : {glyph:'—',title:'洛书 · 等待选择取法',text:'请选择男命或女命传统取法后再正式起卦，系统不会用随机数代替。'};
         result.details.zodiac = {
           glyph: sign[0].slice(0,1), title: `星座 · ${sign[0]} · ${sign[1]}象`,
           text: `本命太阳主题是“${sign[2]}”。在${horizon.reportLabel}观察窗内，不要只强化熟悉优势，要让它服务于${focus[0]}的具体结果。`
         };
-        result.details.fengshui = {
-          glyph: '向', title: '风水 · 未计算',
-          text: '缺少住宅坐向度数、建造或大修年份与户型信息。严格模式不再把命卦方位冒充住宅风水结论。'
+        result.details.chinese_zodiac = {
+          glyph:animal,title:`生肖干支 · ${yearPolarity}${yearElement}${animal}`,
+          text:`按立春边界计算年柱为${ganzhi(pillars.yearIndex)}，对应${yearPolarity}${yearElement}${animal}。这是岁时文化象征，不等于性格定论或事件预测。`
+        };
+        result.details.numerology = {
+          glyph:String(lifePath),title:`生命灵数 · ${lifePath}`,
+          text:`将公历出生日期各位数字相加并递减${[11,22,33].includes(lifePath)?'，保留大师数':''}，得到生命路径数 ${lifePath}：${lifePathMessages[lifePath]}。不同数字学流派规则可能不同。`
+        };
+        result.details.planetary = {
+          glyph:planetaryDay[3],title:`七曜 · ${planetaryDay[0]} · ${planetaryDay[1]}`,
+          text:`公历出生日期对应星期${['日','一','二','三','四','五','六'][new Date(Date.UTC(year,month-1,day)).getUTCDay()]}，其传统曜星为${planetaryDay[1]}，象征${planetaryDay[2]}。`
         };
         return result;
       }
@@ -2500,8 +2547,9 @@ html>body{
         return [cx + Math.cos(angle)*radius, cy + Math.sin(angle)*radius];
       }
       function sectorPath(i,inner,outer) {
-        const a0 = -Math.PI/2 + i*Math.PI/4 - Math.PI/8;
-        const a1 = a0 + Math.PI/4;
+        const step = Math.PI*2/systems.length;
+        const a0 = -Math.PI/2 + i*step - step/2;
+        const a1 = a0 + step;
         const p0=polar(a0,outer),p1=polar(a1,outer),p2=polar(a1,inner),p3=polar(a0,inner);
         return `M${p0[0]},${p0[1]} A${outer},${outer} 0 0 1 ${p1[0]},${p1[1]} L${p2[0]},${p2[1]} A${inner},${inner} 0 0 0 ${p3[0]},${p3[1]} Z`;
       }
@@ -2514,7 +2562,7 @@ html>body{
           path.setAttribute('data-system',system.id);
           path.setAttribute('d',sectorPath(i,190,232));
           sectors.appendChild(path);
-          const a = -Math.PI/2 + i*Math.PI/4;
+          const a = -Math.PI/2 + i*(Math.PI*2/systems.length);
           const [x,y] = polar(a,180);
           const line = document.createElementNS(svgNS,'line');
           line.setAttribute('class','ose-spoke'); line.setAttribute('x1',cx); line.setAttribute('y1',cy); line.setAttribute('x2',x); line.setAttribute('y2',y);
@@ -2543,7 +2591,7 @@ html>body{
       }
       function radarPoints(scores) {
         return scores.map((score,i)=>{
-          const a=-Math.PI/2+i*Math.PI/4;
+          const a=-Math.PI/2+i*(Math.PI*2/systems.length);
           return polar(a,40+(score/100)*130).map(v=>v.toFixed(1)).join(',');
         }).join(' ');
       }
@@ -2557,7 +2605,7 @@ html>body{
           $('#ose-radar-line').setAttribute('points',points);
           const dots=$('#ose-radar-dots');dots.replaceChildren();
           scores.forEach((score,i)=>{
-            const a=-Math.PI/2+i*Math.PI/4;const [x,y]=polar(a,40+(score/100)*130);
+            const a=-Math.PI/2+i*(Math.PI*2/systems.length);const [x,y]=polar(a,40+(score/100)*130);
             const c=document.createElementNS(svgNS,'circle');c.setAttribute('class','ose-radar-dot');c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',4);dots.appendChild(c);
           });
         };
@@ -2570,7 +2618,7 @@ html>body{
         $('#ose-radar-line').dataset.scores=target.join(',');
         const labels=$('#ose-labels');labels.replaceChildren();
         systems.forEach((system,i)=>{
-          const a=-Math.PI/2+i*Math.PI/4;const [x,y]=polar(a,263);
+          const a=-Math.PI/2+i*(Math.PI*2/systems.length);const [x,y]=polar(a,263);
           const text=document.createElementNS(svgNS,'text');text.setAttribute('class','ose-label');text.setAttribute('x',x);text.setAttribute('y',y-4);text.setAttribute('text-anchor','middle');text.textContent=system.label;labels.appendChild(text);
           const sub=document.createElementNS(svgNS,'text');sub.setAttribute('class','ose-label-sub text-small');sub.setAttribute('x',x);sub.setAttribute('y',y+15);sub.setAttribute('text-anchor','middle');sub.textContent=`${state.availability[i]} · ${state.scores[i]}%`;labels.appendChild(sub);
         });
@@ -2619,15 +2667,16 @@ html>body{
         $('#ose-window-note').textContent=state.cast
           ? `${state.cast.changingLines.length?`动爻：${state.cast.changingLines.join('、')}`:'无动爻'} · 三钱法六次投掷`
           : '确认问题后进行六次三钱投掷';
-        $('#ose-consensus').textContent=`${state.activeCount} / 8`;
-        $('#ose-consensus-note').textContent='资料不足的体系不参与结论';
+        $('#ose-consensus').textContent=`${state.activeCount} / ${systems.length}`;
+        $('#ose-consensus-note').textContent=state.cast?'九体系均已进入计算':'选择取法并起卦后九体系全部就绪';
         $('#ose-center-value').textContent=state.overall;
         $('#ose-center-theme').textContent=state.theme[0];
         $('#ose-pillars').textContent=`四柱：${state.pillars.text}`;
         $('#ose-seed-badge').textContent=state.cast?`真实卦次 · ${state.cast.id}`:'尚未正式起卦';
         $('#ose-session-id').textContent=state.cast?`#${state.cast.id}`:'#PENDING';
-        $('#ose-redraw').innerHTML=state.cast?'<i data-lucide="rotate-ccw" aria-hidden="true"></i> 重新起卦':'<i data-lucide="coins" aria-hidden="true"></i> 正式起卦';
-        $('#ose-read').disabled=!state.cast;
+        $('#ose-redraw').innerHTML=!state.kua?'<i data-lucide="circle-alert" aria-hidden="true"></i> 请先选择命卦取法':state.cast?'<i data-lucide="rotate-ccw" aria-hidden="true"></i> 重新起卦':'<i data-lucide="coins" aria-hidden="true"></i> 正式起卦';
+        $('#ose-redraw').disabled=!state.kua;
+        $('#ose-read').disabled=!state.cast||!state.kua;
         $('#ose-synthesis').setAttribute('aria-label',`${horizon.reportLabel}节律`);
         $('#ose-phase-1-title').textContent=`${horizon.phases[0]} · 收束`;
         $('#ose-phase-1-text').textContent=state.focus[1]+'。';
@@ -2661,24 +2710,24 @@ html>body{
         $('#ose-report-frame').textContent=`${narrative[0]} ${narrative[1]}`;
 
         $('#ose-audit-zodiac').textContent=`公历 ${birthLabel} 按常用热带黄道日期区间计算为太阳${d.sign[0]}座，并非由随机象数生成；太阳星座只描述单一人格主题，不承担时间预测。`;
-        $('#ose-audit-calculation').textContent=`周易使用网页三钱法：六次投掷自下而上为 ${d.cast.lines.map(line=>line.total).join('、')}，每次三枚钱币的 2/3 数值均由浏览器安全随机源独立产生；塔罗从完整牌组安全洗牌后无重复抽取三张。`;
-        $('#ose-audit-limits').textContent=`四柱近似计算为 ${d.pillars.text}，出生城市“${d.input.city||'未填写'}”已记录，但尚未接入经纬度、历史时区和真太阳时。紫微、推背个人象序与住宅风水因规则或资料不足均未计算，也不参与结论。`;
+        $('#ose-audit-calculation').textContent=`周易使用网页三钱法：六次投掷自下而上为 ${d.cast.lines.map(line=>line.total).join('、')}，每枚钱币均由浏览器安全随机源独立产生；塔罗从78张牌中无重复抽取三张，符文从24枚古弗萨克符文中无重复抽取三枚。`;
+        $('#ose-audit-limits').textContent=`四柱近似计算为 ${d.pillars.text}，出生城市“${d.input.city||'未填写'}”已记录，但尚未接入经纬度、历史时区和真太阳时，因此不做精确应期。生命灵数、生肖干支、洛书命卦与七曜均按页面公开规则直接计算。`;
 
         $('#ose-consensus-1-topic').textContent=d.theme[0];
         $('#ose-consensus-1-systems').textContent=`周易三钱法：${hexagrams[d.hexIndex]}卦${d.cast.changingLines.length?`，动爻 ${d.cast.changingLines.join('、')}，之${hexagrams[d.changedHexIndex]}卦`:'，无动爻'}`;
         $('#ose-consensus-1-reading').textContent=`依据本卦卦义的人工分类映射，行动转译为“${d.theme[1]}”。这是解释层，不是卦象自行给出的事实日期或事件。`;
-        $('#ose-consensus-2-topic').textContent='潜意识补充';
-        $('#ose-consensus-2-systems').textContent=`塔罗无重复抽牌：根源${rootTarot}、当下${primaryTarot}、建议${adviceTarot}`;
-        $('#ose-consensus-2-reading').textContent=`塔罗单独呈现心理动力，不因为与周易同时出现就宣称两者“真正重复”。可把牌义转成一个自我观察问题，再用行动验证。`;
+        $('#ose-consensus-2-topic').textContent='抽取式原型补充';
+        $('#ose-consensus-2-systems').textContent=`塔罗：根源${rootTarot}、当下${primaryTarot}、建议${adviceTarot}；符文：${d.runeDraws.map(rune=>`${rune[0]} ${rune[1]}`).join('、')}`;
+        $('#ose-consensus-2-reading').textContent=`塔罗与符文分别呈现心理和原型提示，不因为同时出现就宣称它们与周易“真正重复”。应把牌义或符文义转成观察问题，再用行动验证。`;
         $('#ose-consensus-3-topic').textContent='可计算的出生背景';
-        $('#ose-consensus-3-systems').textContent=`近似四柱${d.pillars.text}、太阳${d.sign[0]}${d.kua?`、洛书命卦 ${d.kua}`:''}`;
+        $('#ose-consensus-3-systems').textContent=`四柱${d.pillars.text}、太阳${d.sign[0]}、${d.yearPolarity}${d.yearElement}${d.animal}、命卦 ${d.kua}、生命灵数 ${d.lifePath}、${d.planetaryDay[0]}`;
         $('#ose-consensus-3-reading').textContent=`这些是按输入规则计算的背景层，不负责给出事件日期。所有象征都必须接受明确回应、持续使用、合作承诺或身体指标等现实证据检验。`;
 
-        $('#ose-signal-1').textContent=d.kua?`洛书命卦 ${d.kua} 与${d.direction[0]}方已按传统性别取法计算，但方位本身不等于机会或结果。`:'洛书命卦因选择“不设定性别”而未计算，严格模式不会随机代替。';
-        $('#ose-signal-2').textContent='紫微斗数尚未实现完整安星规则，本次明确排除，不再随机生成“某星入某宫”。';
-        $('#ose-signal-3').textContent='推背图不是个人出生排盘体系，本次不随机抽取象序，也不用于判断人物和年份。';
-        $('#ose-signal-4').textContent='住宅风水缺少坐向度数、建造或大修年份与户型，本次未计算。';
-        $('#ose-report-method').textContent=`严格模式区分三类信息：规则计算、真实随机抽取、资料不足。只有前两类进入分层展示，不强行宣称跨体系一致；周易行动主题来自本卦卦义的人工分类映射。“${d.activeCount} / 8”表示当前具备数据的体系数量，不是准确率。随机起卦与抽牌也不证明它们能够事实预测未来。`;
+        $('#ose-signal-1').textContent=`洛书命卦 ${d.kua} 与${d.direction[0]}方按出生年及所选传统取法计算；方位本身不等于机会或结果。`;
+        $('#ose-signal-2').textContent=`生命灵数 ${d.lifePath} 来自公历出生日期数字递减，象征“${lifePathMessages[d.lifePath]}”；不同数字学流派可能采用不同保留规则。`;
+        $('#ose-signal-3').textContent=`生肖干支按立春年界计算为${d.yearPolarity}${d.yearElement}${d.animal}，它描述岁时文化原型，不是性格定论。`;
+        $('#ose-signal-4').textContent=`出生日期落在${d.planetaryDay[0]}，传统曜星为${d.planetaryDay[1]}；太阳${d.sign[0]}与七曜都只属于出生背景层。`;
+        $('#ose-report-method').textContent=`九体系分成两类：四柱、洛书、太阳星座、生肖干支、生命灵数与七曜按输入规则计算；周易、塔罗与符文使用安全随机源正式抽取。报告分层展示，不强行宣称跨体系一致；周易行动主题来自本卦卦义的人工分类映射。“${d.activeCount} / ${systems.length}”表示已进入计算的体系数量，不是准确率。任何随机抽取都不证明能够事实预测未来。`;
 
         $('#ose-plan-title').textContent=`未来${horizon.reportLabel} · 三阶段行动`;
         $('#ose-stage-1-window').textContent=horizon.reportWindows[0];
