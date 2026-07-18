@@ -1,6 +1,10 @@
 import { readFile } from 'node:fs/promises';
 
-const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+const [html, html2canvas, jspdf] = await Promise.all([
+  readFile(new URL('../index.html', import.meta.url), 'utf8'),
+  readFile(new URL('../vendor/html2canvas-1.4.1.min.js', import.meta.url), 'utf8'),
+  readFile(new URL('../vendor/jspdf-2.5.1.umd.min.js', import.meta.url), 'utf8'),
+]);
 
 const required = [
   'id="oracle-synthesis-engine"',
@@ -14,6 +18,7 @@ const required = [
   'id="ose-report"',
   'id="ose-direct-answer"',
   'id="ose-answer-direct"',
+  'id="ose-download-pdf"',
   'id="ose-report-audit"',
   'id="ose-consensus-table"',
   'id="ose-report-stage-1"',
@@ -64,6 +69,14 @@ if (/Math\.floor\(rng\(\)\*64\)|stars\[Math\.floor/.test(html)) {
 
 if (!html.includes("type:'debt_recovery'") || !html.includes('function debtTimedPlan')) {
   throw new Error('Question-specific debt recovery analysis must not disappear.');
+}
+
+if (html2canvas.length < 150_000 || jspdf.length < 300_000) {
+  throw new Error('Bundled PDF libraries are missing or incomplete.');
+}
+
+if (!html.includes('function downloadDeepReportPdf') || !html.includes('pdf.addImage')) {
+  throw new Error('Visual PDF export must not disappear.');
 }
 
 console.log(`Validated ${scripts.length} inline scripts, ${required.length} UI contracts, ${horizonValues.length} horizons, and ${strictSystems.length} strict systems.`);

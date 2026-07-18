@@ -4,11 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src 'self' blob: data:; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="description" content="区分规则计算、真实随机起卦与资料缺失的严格模式象征性合参工具。">
 <meta name="theme-color" content="#181818" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <title>万象合参罗盘</title>
+<script defer src="vendor/html2canvas-1.4.1.min.js"></script>
+<script defer src="vendor/jspdf-2.5.1.umd.min.js"></script>
 <style>:root {
   color-scheme: light dark;
   background-color: var(--background) !important;
@@ -1347,6 +1349,29 @@ html>body{
       font-size: 0.72rem;
       white-space: nowrap;
     }
+    #oracle-synthesis-engine .ose-pdf-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.38rem;
+      min-height: 2rem;
+      padding: 0.35rem 0.68rem;
+      border: 1px solid color-mix(in srgb, var(--viz-series-1) 28%, var(--border));
+      border-radius: 999px;
+      color: var(--viz-series-1);
+      background: color-mix(in srgb, var(--accent) 55%, transparent);
+      font-size: 0.72rem;
+      font-weight: 650;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: transform 180ms ease, background 180ms ease;
+    }
+    #oracle-synthesis-engine .ose-pdf-button:hover { transform: translateY(-1px); }
+    #oracle-synthesis-engine .ose-pdf-button:disabled {
+      opacity: 0.58;
+      cursor: wait;
+      transform: none;
+    }
     #oracle-synthesis-engine .ose-report-prologue {
       padding: 1.35rem 0 0.2rem;
     }
@@ -1613,6 +1638,180 @@ html>body{
       line-height: 1.6;
     }
     #oracle-synthesis-engine .ose-report-disclaimer strong { color: var(--foreground); }
+    #oracle-synthesis-engine .ose-pdf-export {
+      position: absolute;
+      left: -12000px;
+      top: 0;
+      z-index: -100;
+      width: 1120px;
+      padding: 54px;
+      color: #172033;
+      background: #f4f7fb;
+      font-family: Inter, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      box-sizing: border-box;
+    }
+    #oracle-synthesis-engine .ose-pdf-export *,
+    #oracle-synthesis-engine .ose-pdf-export *::before,
+    #oracle-synthesis-engine .ose-pdf-export *::after {
+      animation: none !important;
+      transition: none !important;
+      box-sizing: border-box;
+      color: #526176 !important;
+      border-color: #d9e2ef !important;
+      outline-color: #268cf2 !important;
+      background-color: transparent !important;
+      background-image: none !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+      filter: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+    #oracle-synthesis-engine .ose-pdf-cover {
+      position: relative;
+      min-height: 560px;
+      padding: 54px;
+      overflow: hidden;
+      border: 1px solid #d9e2ef;
+      border-radius: 34px;
+      background: #f9fbfe;
+    }
+    #oracle-synthesis-engine .ose-pdf-cover::after {
+      content: "象";
+      position: absolute;
+      right: -14px;
+      bottom: -72px;
+      color: #e6eef9;
+      font-size: 250px;
+      font-weight: 700;
+      line-height: 1;
+      opacity: 0.13;
+    }
+    #oracle-synthesis-engine .ose-pdf-cover-kicker {
+      color: #268cf2;
+      font-size: 13px;
+      font-weight: 750;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    #oracle-synthesis-engine .ose-pdf-cover h1 {
+      max-width: 14ch;
+      margin: 54px 0 22px;
+      color: #121a29;
+      font-size: 58px;
+      line-height: 1.08;
+      letter-spacing: -0.05em;
+    }
+    #oracle-synthesis-engine .ose-pdf-cover-question {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0;
+      color: #4e5d73;
+      font-size: 23px;
+      line-height: 1.62;
+    }
+    #oracle-synthesis-engine .ose-pdf-cover-meta {
+      position: absolute;
+      left: 54px;
+      right: 54px;
+      bottom: 48px;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    #oracle-synthesis-engine .ose-pdf-cover-meta div {
+      padding-top: 13px;
+      border-top: 1px solid #d9e2ef;
+    }
+    #oracle-synthesis-engine .ose-pdf-cover-meta span {
+      display: block;
+      margin-bottom: 5px;
+      color: #8090a6;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+    }
+    #oracle-synthesis-engine .ose-pdf-cover-meta strong {
+      color: #263247;
+      font-size: 15px;
+      font-weight: 650;
+    }
+    #oracle-synthesis-engine .ose-pdf-visual {
+      margin-top: 34px;
+      padding: 28px;
+      border: 1px solid #d9e2ef;
+      border-radius: 28px;
+      background: #f9fbfe;
+    }
+    #oracle-synthesis-engine .ose-pdf-visual-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+    #oracle-synthesis-engine .ose-pdf-visual-title h2 {
+      margin: 0;
+      color: #172033;
+      font-size: 26px;
+    }
+    #oracle-synthesis-engine .ose-pdf-visual-title span {
+      color: #8290a4;
+      font-size: 12px;
+    }
+    #oracle-synthesis-engine .ose-pdf-export .ose-chart-wrap,
+    #oracle-synthesis-engine .ose-pdf-export .ose-cast-trace,
+    #oracle-synthesis-engine .ose-pdf-export .ose-report {
+      color: #172033 !important;
+      border-color: #d9e2ef !important;
+      background: #f9fbfe !important;
+      box-shadow: none !important;
+    }
+    #oracle-synthesis-engine .ose-pdf-export .ose-chart-wrap { margin: 0; }
+    #oracle-synthesis-engine .ose-pdf-export .ose-chart { width: 94%; margin-inline: auto; }
+    #oracle-synthesis-engine .ose-pdf-page-separator { height: 120px; }
+    #oracle-synthesis-engine .ose-pdf-export .ose-cast-trace { margin-bottom: 22px; }
+    #oracle-synthesis-engine .ose-pdf-export .ose-report {
+      margin-top: 34px;
+      padding: 44px;
+    }
+    #oracle-synthesis-engine .ose-pdf-export .ose-report-meta button { display: none !important; }
+    #oracle-synthesis-engine .ose-pdf-export :is(.ose-direct-answer,.ose-report-panel,.ose-decision-card,.ose-stage,.ose-table-wrap) {
+      border-color: #d9e2ef !important;
+      background: #f4f8fd !important;
+      box-shadow: none !important;
+    }
+    #oracle-synthesis-engine .ose-pdf-export :is(.ose-report-summary,.text-muted,.ose-report p,.ose-consensus-table td,.ose-consensus-table th) {
+      color: #627086 !important;
+    }
+    #oracle-synthesis-engine .ose-pdf-export :is(h1,h2,h3,strong,.ose-stage-action,.ose-consensus-table td:first-child) {
+      color: #172033 !important;
+    }
+    #oracle-synthesis-engine .ose-pdf-export :is(.ose-pdf-cover,.ose-pdf-visual,.ose-report,.ose-chart-wrap,.ose-cast-trace) {
+      background-color: #f9fbfe !important;
+    }
+    #oracle-synthesis-engine .ose-pdf-export :is(.ose-direct-answer,.ose-stage.is-key) {
+      background-color: #edf5ff !important;
+    }
+    #oracle-synthesis-engine .ose-pdf-export :is(.ose-report-panel,.ose-decision-card,.ose-stage,.ose-table-wrap,.ose-answer-factor) {
+      background-color: #f4f7fb !important;
+    }
+    #oracle-synthesis-engine .ose-pdf-export .ose-audit-list li::before {
+      color: #ffffff !important;
+      background-color: #268cf2 !important;
+    }
+    #oracle-synthesis-engine .ose-pdf-export .ose-stage::before { color: #e8edf4 !important; }
+    #oracle-synthesis-engine .ose-pdf-export .ose-pdf-cover::after { color: #e6eef9 !important; }
+    #oracle-synthesis-engine .ose-pdf-export .ose-ring,
+    #oracle-synthesis-engine .ose-pdf-export .ose-spoke { fill: none !important; stroke: #d9e2ef !important; }
+    #oracle-synthesis-engine .ose-pdf-export .ose-sector { fill: #edf1f6 !important; stroke: #f9fbfe !important; }
+    #oracle-synthesis-engine .ose-pdf-export .ose-sector.is-active { fill: #dcecff !important; }
+    #oracle-synthesis-engine .ose-pdf-export .ose-radar-fill { fill: #268cf2 !important; }
+    #oracle-synthesis-engine .ose-pdf-export .ose-radar-line { fill: none !important; stroke: #268cf2 !important; }
+    #oracle-synthesis-engine .ose-pdf-export .ose-radar-dot { fill: #ffffff !important; stroke: #268cf2 !important; }
+    #oracle-synthesis-engine .ose-pdf-export .ose-center-ring { fill: #f9fbfe !important; stroke: #d9e2ef !important; }
+    #oracle-synthesis-engine .ose-pdf-export :is(.ose-label,.ose-center-value,#ose-center-theme) { fill: #172033 !important; }
+    #oracle-synthesis-engine .ose-pdf-export :is(.ose-label-sub,.ose-center-sub,.ose-grid-number) { fill: #718095 !important; }
     #oracle-synthesis-engine .form-label {
       color: var(--muted-foreground);
       font-weight: 500;
@@ -1984,6 +2183,7 @@ html>body{
       <div class="ose-report-meta" aria-label="报告元数据">
         <span id="ose-report-id">REPORT #000000</span>
         <span id="ose-report-scope">9 体系 · 象征性</span>
+        <button class="ose-pdf-button" id="ose-download-pdf" type="button"><i data-lucide="download" aria-hidden="true"></i> 下载 PDF</button>
       </div>
     </header>
 
@@ -2837,6 +3037,166 @@ html>body{
         if(window.lucide)window.lucide.createIcons({attrs:{width:16,height:16}});
         $('#ose-report').hidden=true;
       }
+      let pdfLibrariesPromise=null;
+      let pdfHtml2Canvas=typeof window.html2canvas==='function'?window.html2canvas:null;
+      let pdfJsPDF=window.jspdf?.jsPDF||null;
+      async function loadPdfScript(id,src,kind) {
+        const syncGlobal=()=>{
+          if(kind==='canvas'&&typeof window.html2canvas==='function')pdfHtml2Canvas=window.html2canvas;
+          if(kind==='pdf'&&window.jspdf?.jsPDF)pdfJsPDF=window.jspdf.jsPDF;
+        };
+        syncGlobal();
+        if(kind==='canvas'?pdfHtml2Canvas:pdfJsPDF)return;
+        try {
+          await new Promise((resolve,reject)=>{
+            document.getElementById(id)?.remove();
+            const script=document.createElement('script');
+            script.id=id;script.src=src;script.async=true;
+            const timeout=window.setTimeout(()=>reject(new Error(`加载 ${id} 超时`)),5000);
+            script.addEventListener('load',()=>{window.clearTimeout(timeout);resolve();},{once:true});
+            script.addEventListener('error',()=>{window.clearTimeout(timeout);reject(new Error(`无法加载 ${id}`));},{once:true});
+            document.head.appendChild(script);
+          });
+        } catch(error) {
+          console.warn(`${id} 标签加载失败，尝试站内回退`,error);
+        }
+        syncGlobal();
+        if(kind==='canvas'?pdfHtml2Canvas:pdfJsPDF)return;
+        const response=await fetch(src,{cache:'force-cache'});
+        if(!response.ok)throw new Error(`无法读取 ${id}`);
+        const source=await response.text();
+        const module={exports:{}};
+        new Function('module','exports',`${source}\n//# sourceURL=${new URL(src,location.href).href}`)(module,module.exports);
+        if(kind==='canvas')pdfHtml2Canvas=module.exports?.default||module.exports;
+        if(kind==='pdf')pdfJsPDF=module.exports?.jsPDF||module.exports?.default?.jsPDF;
+        if(!(kind==='canvas'?typeof pdfHtml2Canvas==='function':typeof pdfJsPDF==='function'))throw new Error(`${id} 未正确初始化`);
+      }
+      function ensurePdfLibraries() {
+        if(pdfHtml2Canvas&&pdfJsPDF) return Promise.resolve();
+        if(!pdfLibrariesPromise) {
+          pdfLibrariesPromise=Promise.all([
+            loadPdfScript('ose-html2canvas','vendor/html2canvas-1.4.1.min.js','canvas'),
+            loadPdfScript('ose-jspdf','vendor/jspdf-2.5.1.umd.min.js','pdf')
+          ]).catch(error=>{pdfLibrariesPromise=null;throw error;});
+        }
+        return pdfLibrariesPromise;
+      }
+      function pdfElement(tag,className,text) {
+        const element=document.createElement(tag);
+        if(className)element.className=className;
+        if(text!==undefined)element.textContent=text;
+        return element;
+      }
+      function createPdfExportNode() {
+        const exportRoot=pdfElement('div','ose-pdf-export');
+        exportRoot.setAttribute('aria-hidden','true');
+
+        const cover=pdfElement('section','ose-pdf-cover');
+        cover.appendChild(pdfElement('div','ose-pdf-cover-kicker','Oracle OS · Symbolic Synthesis Report'));
+        cover.appendChild(pdfElement('h1','',`${state.intent.label||state.focus[0]} · ${state.horizon.reportLabel}深度合参`));
+        cover.appendChild(pdfElement('p','ose-pdf-cover-question',`“${state.input.question}”`));
+        const coverMeta=pdfElement('div','ose-pdf-cover-meta');
+        const metaItems=[
+          ['CAST',`#${state.cast.id}`],
+          ['HORIZON',state.horizon.label],
+          ['BIRTH',`${state.input.date} ${state.input.time} · ${state.input.city||'城市未填写'}`]
+        ];
+        metaItems.forEach(([label,value])=>{
+          const item=document.createElement('div');
+          item.append(pdfElement('span','',label),pdfElement('strong','',value));
+          coverMeta.appendChild(item);
+        });
+        cover.appendChild(coverMeta);
+        exportRoot.appendChild(cover);
+
+        const visual=pdfElement('section','ose-pdf-visual');
+        const visualTitle=pdfElement('div','ose-pdf-visual-title');
+        visualTitle.append(pdfElement('h2','','九体系象征图谱'),pdfElement('span','','真实起卦 · 真实抽取 · 规则计算'));
+        visual.appendChild(visualTitle);
+        const traceClone=$('#ose-cast-trace').cloneNode(true);traceClone.hidden=false;traceClone.removeAttribute('id');
+        const chartClone=root.querySelector('.ose-chart-wrap').cloneNode(true);chartClone.removeAttribute('id');
+        visual.append(traceClone,chartClone);
+        exportRoot.appendChild(visual);
+        exportRoot.appendChild(pdfElement('div','ose-pdf-page-separator'));
+
+        const reportClone=$('#ose-report').cloneNode(true);
+        reportClone.hidden=false;reportClone.removeAttribute('id');reportClone.removeAttribute('aria-live');
+        reportClone.querySelector('#ose-download-pdf')?.remove();
+        exportRoot.appendChild(reportClone);
+        root.appendChild(exportRoot);
+        return exportRoot;
+      }
+      function safePdfFilename() {
+        const subject=(state.intent.label||state.focus[0]).replace(/[\\/:*?"<>|]/g,'').slice(0,20);
+        return `万象合参-${subject}-${state.input.date}-${state.cast.id}.pdf`;
+      }
+      async function downloadDeepReportPdf() {
+        if(!state.cast||$('#ose-report').hidden)return;
+        const button=$('#ose-download-pdf');
+        const original=button.innerHTML;
+        button.dataset.pdfStage='start';delete button.dataset.pdfError;delete button.dataset.pdfPages;delete button.dataset.pdfBytes;
+        button.disabled=true;button.setAttribute('aria-busy','true');button.textContent='正在生成 PDF…';
+        let exportNode;
+        try {
+          button.dataset.pdfStage='libraries';
+          await ensurePdfLibraries();
+          button.dataset.pdfStage='layout';
+          exportNode=createPdfExportNode();
+          await document.fonts?.ready;
+          await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+          const scale=1.5;
+          button.dataset.pdfStage='capture';
+          const canvas=await pdfHtml2Canvas(exportNode,{scale,backgroundColor:'#f4f7fb',logging:false,useCORS:true,windowWidth:1120,scrollX:0,scrollY:0});
+          const jsPDF=pdfJsPDF;
+          const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4',compress:true});
+          pdf.setProperties({title:'Oracle OS Synthesis Report',subject:'Symbolic reflection report',creator:'Oracle OS'});
+          const pageWidth=210,pageHeight=297,margin=8,footer=7;
+          const imageWidth=pageWidth-margin*2;
+          const maxSliceHeight=Math.floor(canvas.width*((pageHeight-margin*2-footer)/imageWidth));
+          const rootTop=exportNode.getBoundingClientRect().top;
+          const reportStart=Math.round((exportNode.querySelector('.ose-report').getBoundingClientRect().top-rootTop)*scale);
+          const candidates=[...exportNode.querySelectorAll('.ose-pdf-visual,.ose-report,.ose-direct-answer,.ose-report-section,.ose-report-disclaimer')]
+            .map(element=>Math.round((element.getBoundingClientRect().top-rootTop)*scale))
+            .filter(value=>value>0&&value<canvas.height)
+            .sort((a,b)=>a-b);
+          const slices=[];
+          let start=0;
+          while(start<canvas.height) {
+            const hardEnd=Math.min(canvas.height,start+maxSliceHeight);
+            const usableBreaks=candidates.filter(value=>value>start+maxSliceHeight*0.55&&value<hardEnd-4);
+            let end=start===0&&reportStart<hardEnd?reportStart:(usableBreaks.length?usableBreaks[usableBreaks.length-1]:hardEnd);
+            if(canvas.height-end<maxSliceHeight*0.18)end=canvas.height;
+            if(end<=start)end=hardEnd;
+            slices.push([start,end]);start=end;
+          }
+          slices.forEach(([from,to],index)=>{
+            if(index)pdf.addPage();
+            const slice=document.createElement('canvas');slice.width=canvas.width;slice.height=to-from;
+            const context=slice.getContext('2d');context.fillStyle='#f4f7fb';context.fillRect(0,0,slice.width,slice.height);
+            context.drawImage(canvas,0,from,canvas.width,to-from,0,0,canvas.width,to-from);
+            const renderedHeight=(to-from)*imageWidth/canvas.width;
+            pdf.addImage(slice.toDataURL('image/jpeg',0.92),'JPEG',margin,margin,imageWidth,renderedHeight,undefined,'FAST');
+            pdf.setDrawColor(218,226,237);pdf.line(margin,pageHeight-8,pageWidth-margin,pageHeight-8);
+            pdf.setFont('helvetica','normal');pdf.setFontSize(7);pdf.setTextColor(113,128,149);
+            pdf.text(`ORACLE OS  ·  PAGE ${index+1} / ${slices.length}`,margin,pageHeight-4.3);
+          });
+          const blob=pdf.output('blob');
+          const filename=safePdfFilename();
+          button.dataset.pdfStage='download';button.dataset.pdfPages=String(slices.length);button.dataset.pdfBytes=String(blob.size);button.dataset.pdfFilename=filename;
+          const url=URL.createObjectURL(blob);const anchor=document.createElement('a');
+          anchor.href=url;anchor.download=filename;document.body.appendChild(anchor);anchor.click();anchor.remove();
+          window.setTimeout(()=>URL.revokeObjectURL(url),60000);
+        } catch(error) {
+          console.error('PDF export failed',error);
+          button.dataset.pdfStage='error';button.dataset.pdfError=String(error?.message||error);
+          button.textContent='生成失败，请重试';
+          await new Promise(resolve=>window.setTimeout(resolve,1800));
+        } finally {
+          exportNode?.remove();
+          button.disabled=false;button.removeAttribute('aria-busy');button.innerHTML=original;
+          if(window.lucide)window.lucide.createIcons({attrs:{width:16,height:16}});
+        }
+      }
       function renderDeepReport() {
         const d=state;
         if(!d.cast)return;
@@ -2921,6 +3281,7 @@ html>body{
       $('#ose-question').addEventListener('input',invalidateCast);
       $('#ose-redraw').addEventListener('click',()=>{currentCast=makeCast();renderAll(true);});
       $('#ose-read').addEventListener('click',renderDeepReport);
+      $('#ose-download-pdf').addEventListener('click',downloadDeepReportPdf);
       renderAll(false);
       if(window.lucide)window.lucide.createIcons({attrs:{width:16,height:16}});
     })();
