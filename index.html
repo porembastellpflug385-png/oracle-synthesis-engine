@@ -1546,6 +1546,81 @@ html>body{
       font-weight: 600;
     }
     #oracle-synthesis-engine .ose-consensus-table td:nth-child(2) { width: 31%; }
+    #oracle-synthesis-engine .ose-consensus-summary {
+      max-width: 78ch;
+      margin: 0 0 0.85rem;
+      color: var(--foreground);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+    #oracle-synthesis-engine .ose-consensus-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-bottom: 1rem;
+    }
+    #oracle-synthesis-engine .ose-consensus-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.38rem 0.68rem;
+      border: 1px solid color-mix(in srgb, var(--viz-series-1) 24%, var(--border));
+      border-radius: 999px;
+      color: var(--viz-series-1);
+      background: color-mix(in srgb, var(--accent) 46%, transparent);
+      font-size: 0.74rem;
+      font-weight: 650;
+    }
+    #oracle-synthesis-engine .ose-consensus-chip small {
+      color: var(--muted-foreground);
+      font-size: 0.67rem;
+      font-weight: 500;
+    }
+    #oracle-synthesis-engine .ose-axis-list {
+      display: grid;
+      gap: 0.72rem;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      background: color-mix(in srgb, var(--card) 54%, transparent);
+    }
+    #oracle-synthesis-engine .ose-axis-row {
+      display: grid;
+      grid-template-columns: 5.8rem minmax(8rem,1fr) 5.8rem;
+      gap: 0.7rem;
+      align-items: center;
+    }
+    #oracle-synthesis-engine .ose-axis-label {
+      color: var(--muted-foreground);
+      font-size: 0.72rem;
+    }
+    #oracle-synthesis-engine .ose-axis-label:last-child { text-align: right; }
+    #oracle-synthesis-engine .ose-axis-track {
+      position: relative;
+      height: 0.48rem;
+      border-radius: 999px;
+      background: linear-gradient(90deg,color-mix(in srgb,var(--viz-series-5) 34%,transparent),var(--muted),color-mix(in srgb,var(--viz-series-1) 34%,transparent));
+    }
+    #oracle-synthesis-engine .ose-axis-track::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -0.2rem;
+      width: 1px;
+      height: 0.88rem;
+      background: var(--border);
+    }
+    #oracle-synthesis-engine .ose-axis-marker {
+      position: absolute;
+      top: 50%;
+      width: 0.85rem;
+      height: 0.85rem;
+      border: 2px solid var(--background);
+      border-radius: 50%;
+      background: var(--viz-series-1);
+      box-shadow: 0 2px 8px color-mix(in srgb,var(--viz-series-1) 24%,transparent);
+      transform: translate(-50%,-50%);
+    }
     #oracle-synthesis-engine .ose-report-columns,
     #oracle-synthesis-engine .ose-decision-grid {
       display: grid;
@@ -1793,6 +1868,24 @@ html>body{
     #oracle-synthesis-engine .ose-pdf-export :is(.ose-direct-answer,.ose-stage.is-key) {
       background-color: #edf5ff !important;
     }
+    #oracle-synthesis-engine .ose-pdf-export .ose-axis-list {
+      background-color: #f4f7fb !important;
+    }
+    #oracle-synthesis-engine .ose-pdf-export .ose-axis-track {
+      background-color: #dfe7f1 !important;
+    }
+    #oracle-synthesis-engine .ose-pdf-export .ose-axis-marker {
+      border-color: #ffffff !important;
+      background-color: #268cf2 !important;
+    }
+    #oracle-synthesis-engine .ose-pdf-export .ose-consensus-chip {
+      color: #268cf2 !important;
+      border-color: #cfe0f4 !important;
+      background-color: #edf5ff !important;
+    }
+    #oracle-synthesis-engine .ose-pdf-export .ose-consensus-chip small {
+      color: #627086 !important;
+    }
     #oracle-synthesis-engine .ose-pdf-export :is(.ose-report-panel,.ose-decision-card,.ose-stage,.ose-table-wrap,.ose-answer-factor) {
       background-color: #f4f7fb !important;
     }
@@ -1998,6 +2091,68 @@ html>body{
         text-align: left;
       }
       #oracle-synthesis-engine .ose-stage { min-height: 0; }
+      #oracle-synthesis-engine .ose-axis-row { grid-template-columns: 4.2rem minmax(6rem,1fr) 4.2rem; gap: 0.45rem; }
+      #oracle-synthesis-engine .ose-table-wrap { overflow: hidden; }
+      #oracle-synthesis-engine .ose-consensus-table { min-width: 0; }
+      #oracle-synthesis-engine .ose-consensus-table thead { display: none; }
+      #oracle-synthesis-engine .ose-consensus-table,
+      #oracle-synthesis-engine .ose-consensus-table tbody,
+      #oracle-synthesis-engine .ose-consensus-table tr,
+      #oracle-synthesis-engine .ose-consensus-table td { display: block; width: 100%; }
+      #oracle-synthesis-engine .ose-consensus-table tr {
+        padding: 0.85rem;
+        border-top: 1px solid var(--border);
+      }
+      #oracle-synthesis-engine .ose-consensus-table tr:first-child { border-top: 0; }
+      #oracle-synthesis-engine .ose-consensus-table td {
+        padding: 0;
+        border-top: 0;
+      }
+      #oracle-synthesis-engine .ose-consensus-table td:first-child {
+        width: 100%;
+        margin-bottom: 0.55rem;
+        color: var(--foreground);
+        font-size: 0.98rem;
+      }
+      #oracle-synthesis-engine .ose-consensus-table td:nth-child(2) { width: 100%; }
+      #oracle-synthesis-engine .ose-consensus-table td:nth-child(n+2)::before {
+        display: block;
+        margin: 0.5rem 0 0.12rem;
+        color: var(--muted-foreground);
+        font-size: 0.65rem;
+        font-weight: 650;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      #oracle-synthesis-engine .ose-consensus-table td:nth-child(2)::before { content: "本次实际结果"; }
+      #oracle-synthesis-engine .ose-consensus-table td:nth-child(3)::before { content: "综合信号 · 作用层"; }
+      #oracle-synthesis-engine .ose-pdf-export .ose-table-wrap { overflow: visible; }
+      #oracle-synthesis-engine .ose-pdf-export .ose-consensus-table {
+        display: table;
+        width: 100%;
+        min-width: 680px;
+      }
+      #oracle-synthesis-engine .ose-pdf-export .ose-consensus-table thead { display: table-header-group; }
+      #oracle-synthesis-engine .ose-pdf-export .ose-consensus-table tbody { display: table-row-group; }
+      #oracle-synthesis-engine .ose-pdf-export .ose-consensus-table tr {
+        display: table-row;
+        width: auto;
+        padding: 0;
+        border-top: 0;
+      }
+      #oracle-synthesis-engine .ose-pdf-export .ose-consensus-table td {
+        display: table-cell;
+        width: auto;
+        padding: 0.9rem 0.85rem;
+        border-top: 1px solid #d9e2ef;
+      }
+      #oracle-synthesis-engine .ose-pdf-export .ose-consensus-table td:first-child {
+        width: 23%;
+        margin-bottom: 0;
+        font-size: inherit;
+      }
+      #oracle-synthesis-engine .ose-pdf-export .ose-consensus-table td:nth-child(2) { width: 31%; }
+      #oracle-synthesis-engine .ose-pdf-export .ose-consensus-table td:nth-child(n+2)::before { display: none; }
       #oracle-synthesis-engine .ose-glyph {
         text-align: center;
       }
@@ -2065,9 +2220,9 @@ html>body{
         <option value="change">迁移与转变</option>
       </select>
     </label>
-    <label class="form-label" for="ose-cast-method">起卦方式
+    <label class="form-label" for="ose-cast-method">实时抽取方式
       <select class="form-select" id="ose-cast-method" disabled>
-        <option>网页三钱法 · 安全随机</option>
+        <option>三钱起卦＋塔罗＋符文 · 安全随机</option>
       </select>
     </label>
     <fieldset class="ose-horizon ose-wide" id="ose-horizon">
@@ -2087,12 +2242,12 @@ html>body{
     </label>
     <div class="ose-wide ose-actions">
       <span class="viz-badge" id="ose-seed-badge">尚未正式起卦</span>
-      <button class="btn" id="ose-redraw" type="button"><i data-lucide="coins" aria-hidden="true"></i> 正式起卦</button>
+      <button class="btn" id="ose-redraw" type="button"><i data-lucide="coins" aria-hidden="true"></i> 正式起卦与抽取</button>
       <button class="btn btn-primary" id="ose-read" type="button" disabled><i data-lucide="sparkles" aria-hidden="true"></i> 深度合参</button>
     </div>
     <div class="ose-wide ose-cast-guidance text-small" id="ose-cast-guidance">
       <strong>一事一占</strong>
-      <span>六次三钱投掷会自然产生本卦与动爻。只有问题实质改变、现实条件重大变化或原观察周期结束时才重新起卦；不要因为不喜欢结果而连续重占。</span>
+      <span>一次正式合参会同时完成六次三钱投掷、三张塔罗与三枚符文抽取；其余六项按出生输入计算。只有问题实质改变、现实条件重大变化或原观察周期结束时才重新生成。</span>
     </div>
     </div>
   </div>
@@ -2104,7 +2259,7 @@ html>body{
       <span class="text-small text-muted" id="ose-overall-note">等待起卦</span>
     </div>
     <div class="card viz-stat">
-      <span class="text-muted">本卦 → 之卦</span>
+      <span class="text-muted">实时抽取结果</span>
       <span class="viz-stat-value" id="ose-window">待起卦</span>
       <span class="text-small text-muted" id="ose-window-note">真实三钱法六次投掷</span>
     </div>
@@ -2215,6 +2370,16 @@ html>body{
       </div>
     </section>
 
+    <section class="ose-report-section" id="ose-nine-synthesis">
+      <div class="ose-report-section-title">
+        <h3>九体系综合结论</h3>
+        <p>将九项实际结果映射到同一组行动轴，再识别真正重复与相互抵消的信号。</p>
+      </div>
+      <p class="ose-consensus-summary" id="ose-nine-summary"></p>
+      <div class="ose-consensus-chips" id="ose-nine-chips" aria-label="重复主题"></div>
+      <div class="ose-axis-list" id="ose-axis-list" aria-label="九体系共识轴"></div>
+    </section>
+
     <section class="ose-report-section" id="ose-report-audit">
       <div class="ose-report-section-title">
         <h3>数据校验</h3>
@@ -2229,19 +2394,15 @@ html>body{
 
     <section class="ose-report-section">
       <div class="ose-report-section-title">
-        <h3>实际结果的分层合参</h3>
-        <p>不强行制造“共识”，分别展示真实起卦、真实抽牌与规则计算。</p>
+        <h3>九体系实际输入矩阵</h3>
+        <p>每一行都是本次实际取得的结果，以及它进入综合模型时贡献的信号。</p>
       </div>
       <div class="ose-table-wrap">
         <table class="ose-consensus-table" id="ose-consensus-table">
           <thead>
-            <tr><th>结果层</th><th>实际来源</th><th>克制解读</th></tr>
+            <tr><th>体系</th><th>本次实际结果</th><th>综合信号 · 作用层</th></tr>
           </thead>
-          <tbody>
-            <tr><td id="ose-consensus-1-topic"></td><td id="ose-consensus-1-systems"></td><td id="ose-consensus-1-reading"></td></tr>
-            <tr><td id="ose-consensus-2-topic"></td><td id="ose-consensus-2-systems"></td><td id="ose-consensus-2-reading"></td></tr>
-            <tr><td id="ose-consensus-3-topic"></td><td id="ose-consensus-3-systems"></td><td id="ose-consensus-3-reading"></td></tr>
-          </tbody>
+          <tbody id="ose-consensus-body"></tbody>
         </table>
       </div>
     </section>
@@ -2249,7 +2410,7 @@ html>body{
     <section class="ose-report-section ose-report-columns">
       <div class="ose-report-panel">
         <p class="ose-section-kicker">Single-system signals</p>
-        <h3>仅来自单一体系的象征</h3>
+        <h3>未形成重复的单体系信号</h3>
         <ul class="ose-signal-list">
           <li id="ose-signal-1"></li>
           <li id="ose-signal-2"></li>
@@ -2503,6 +2664,114 @@ html>body{
           stop: '到第 45 天，若新路径没有产生持续参与、明确邀请、收入可能或生活质量改善中的至少两项，停止扩大不可逆成本，保留退路并重做试验。'
         }
       };
+      const synthesisAxes = {
+        pace:{left:'观察',right:'推进',negative:'先观察',positive:'主动推进'},
+        change:{left:'守成',right:'变革',negative:'守住核心',positive:'更新路径'},
+        agency:{left:'协作',right:'独立',negative:'协作借力',positive:'自主决断'},
+        visibility:{left:'内隐',right:'公开',negative:'内部整理',positive:'公开确权'},
+        structure:{left:'弹性',right:'结构',negative:'保留弹性',positive:'建立规则'}
+      };
+      const themeVectors = {
+        '守中破局':{pace:-1,change:1,structure:1},'减法生势':{pace:-1,change:-1,structure:1},
+        '借力成局':{agency:-2,structure:1},'换轨重启':{pace:1,change:2},
+        '慢即是快':{pace:-2,visibility:-1},'公开见光':{pace:1,visibility:2},
+        '边界聚能':{agency:1,structure:2},'先难后易':{pace:1,structure:1}
+      };
+      const elementVectors = {
+        木:{pace:1,change:1,structure:-1},火:{pace:1,visibility:2},土:{pace:-1,change:-1,structure:2},
+        金:{agency:1,visibility:1,structure:2},水:{pace:-1,agency:-1,visibility:-1,structure:-1}
+      };
+      const kuaVectors = {
+        1:{pace:-1,visibility:-1,structure:-1},2:{pace:-1,agency:-1,structure:1},3:{pace:2,change:1},
+        4:{change:1,agency:-1,structure:-1},6:{agency:1,visibility:1,structure:2},7:{agency:-1,visibility:1},
+        8:{pace:-2,change:-1,structure:2},9:{pace:1,visibility:2}
+      };
+      const numerologyVectors = {
+        1:{pace:1,agency:2},2:{pace:-1,agency:-2},3:{pace:1,agency:-1,visibility:2},4:{change:-1,structure:2},
+        5:{pace:1,change:2,structure:-1},6:{agency:-2,structure:1},7:{pace:-2,visibility:-1},8:{pace:1,agency:1,structure:2},
+        9:{change:1,agency:-1,visibility:1},11:{pace:-1,visibility:-2},22:{change:1,structure:2},33:{agency:-2,visibility:1}
+      };
+      const planetaryVectors = {
+        太阳:{pace:1,agency:1,visibility:2},月亮:{pace:-1,agency:-1,visibility:-2},火星:{pace:2,agency:1,structure:1},
+        水星:{pace:1,agency:-1,visibility:1,structure:-1},木星:{pace:2,change:1,visibility:1},
+        金星:{pace:-1,agency:-2,visibility:1},土星:{pace:-2,change:-1,structure:2}
+      };
+      const runeVectors = {
+        Fehu:{pace:1,structure:1},Uruz:{pace:2,agency:1},Thurisaz:{pace:-1,agency:1,structure:1},Ansuz:{agency:-1,visibility:2},
+        Raidho:{pace:1,change:1,structure:1},Kenaz:{visibility:2,structure:1},Gebo:{agency:-2,structure:1},Wunjo:{agency:-2,visibility:1},
+        Hagalaz:{change:2,structure:-1},Nauthiz:{pace:-2,structure:2},Isa:{pace:-2,change:-1},Jera:{pace:-1,change:-1,structure:1},
+        Eihwaz:{pace:-1,change:1,structure:2},Perthro:{pace:-1,visibility:-2,structure:-1},Algiz:{pace:-1,agency:-1,structure:2},
+        Sowilo:{pace:1,visibility:2},Tiwaz:{pace:1,agency:1,structure:2},Berkano:{pace:-1,change:1,agency:-1},
+        Ehwaz:{pace:1,change:1,agency:-2},Mannaz:{agency:-2,visibility:1},Laguz:{pace:-1,agency:-1,visibility:-2,structure:-1},
+        Ingwaz:{pace:-1,change:1,visibility:-1},Dagaz:{pace:1,change:2,visibility:1},Othala:{change:-1,agency:-1,structure:2}
+      };
+      function mergeVectors(entries) {
+        const sums={};
+        entries.forEach(([vector,weight=1])=>Object.entries(vector||{}).forEach(([key,value])=>{sums[key]=(sums[key]||0)+value*weight;}));
+        return Object.fromEntries(Object.entries(sums).map(([key,value])=>[key,value===0?0:(value>0?Math.min(2,value):Math.max(-2,value))]));
+      }
+      function tarotVector(draws) {
+        const major={
+          愚者:{pace:1,change:2,structure:-1},魔术师:{pace:2,agency:1,visibility:1},女祭司:{pace:-2,visibility:-2},皇后:{agency:-2,change:1},
+          皇帝:{agency:1,structure:2},教皇:{change:-1,agency:-1,structure:2},恋人:{agency:-2,visibility:1},战车:{pace:2,agency:1},
+          力量:{pace:1,agency:1,structure:1},隐者:{pace:-2,visibility:-2},命运之轮:{change:2,structure:-1},正义:{visibility:1,structure:2},
+          吊人:{pace:-2,change:1},死神:{change:2,structure:-1},节制:{pace:-1,agency:-2,structure:1},恶魔:{visibility:-2,structure:-1},
+          高塔:{change:2,structure:-2},星星:{pace:1,agency:-1,visibility:1},月亮:{pace:-2,visibility:-2},太阳:{pace:2,visibility:2},
+          审判:{change:2,visibility:2},世界:{pace:1,agency:-1,structure:2}
+        };
+        const suit={权杖:{pace:2,change:1},圣杯:{pace:-1,agency:-2},宝剑:{agency:1,visibility:1,structure:1},星币:{change:-1,structure:2}};
+        return mergeVectors(draws.map((draw,index)=>{
+          const name=draw.card[0];const vector=major[name]||suit[Object.keys(suit).find(key=>name.startsWith(key))]||{};
+          const adjusted=draw.reversed?mergeVectors([[vector,0.6],[{pace:-1},1]]):vector;
+          return [adjusted,index===2?1.5:1];
+        }));
+      }
+      function vectorSignalLabels(vector) {
+        return Object.entries(vector).filter(([,value])=>value).map(([key,value])=>value>0?synthesisAxes[key].positive:synthesisAxes[key].negative);
+      }
+      function buildNineSynthesis(d) {
+        const changedTheme=themes[hexThemeIndices[d.changedHexIndex]][0];
+        const ichingVector=mergeVectors([[themeVectors[d.theme[0]],2],[themeVectors[changedTheme],1]]);
+        const tarotSignal=tarotVector(d.tarotCards);
+        const runeSignal=mergeVectors(d.runeDraws.map((rune,index)=>[runeVectors[rune[1]]||{},index===2?1.5:1]));
+        const baziSignal=mergeVectors([[elementVectors[d.pillars.strongest],2],[elementVectors[d.pillars.dayMaster],1]]);
+        const zodiacElement={火:elementVectors.火,土:elementVectors.土,风:{pace:1,change:1,agency:-1,visibility:1,structure:-1},水:elementVectors.水}[d.sign[1]];
+        const branchVector=d.pillars.yearBranch%3===0?{pace:1,agency:1}:d.pillars.yearBranch%3===1?{agency:-1,structure:1}:{change:1,visibility:1};
+        const items=[
+          {id:'tarot',label:'塔罗',result:d.tarotCards.map((x,i)=>`${['根源','当下','建议'][i]}${x.card[0]}${x.reversed?'逆位':''}`).join('；'),layer:'实时抽取 · 心理原型',vector:tarotSignal},
+          {id:'iching',label:'周易',result:`${hexagrams[d.hexIndex]}卦${d.cast.changingLines.length?`，动爻 ${d.cast.changingLines.join('、')}，之${hexagrams[d.changedHexIndex]}卦`:'，无动爻'}`,layer:'实时抽取 · 变化结构',vector:ichingVector},
+          {id:'runes',label:'北欧符文',result:d.runeDraws.map(rune=>`${rune[0]} ${rune[1]}`).join('、'),layer:'实时抽取 · 原型提示',vector:runeSignal},
+          {id:'bazi',label:'四柱',result:`${d.pillars.text}；${d.pillars.strongest}旺、日主${d.pillars.dayMaster}`,layer:'出生规则 · 近似结构',vector:baziSignal},
+          {id:'luoshu',label:'洛书',result:`命卦 ${d.kua} · ${d.direction[0]}方`,layer:'出生规则 · 数理方位',vector:kuaVectors[d.kua]},
+          {id:'zodiac',label:'太阳星座',result:`${d.sign[0]} · ${d.sign[1]}象`,layer:'出生规则 · 人格动力',vector:zodiacElement},
+          {id:'chinese_zodiac',label:'生肖干支',result:`${ganzhi(d.pillars.yearIndex)} · ${d.yearPolarity}${d.yearElement}${d.animal}`,layer:'出生规则 · 岁时原型',vector:mergeVectors([[elementVectors[d.yearElement],2],[branchVector,1]])},
+          {id:'numerology',label:'生命灵数',result:`生命路径数 ${d.lifePath} · ${lifePathMessages[d.lifePath]}`,layer:'出生规则 · 数字原型',vector:numerologyVectors[d.lifePath]},
+          {id:'planetary',label:'七曜',result:`${d.planetaryDay[0]} · ${d.planetaryDay[1]}`,layer:'出生规则 · 生日曜星',vector:planetaryVectors[d.planetaryDay[1]]}
+        ];
+        items.forEach(item=>{item.signals=vectorSignalLabels(item.vector);});
+        const axes=Object.entries(synthesisAxes).map(([key,meta])=>{
+          const positive=items.filter(item=>(item.vector?.[key]||0)>0);
+          const negative=items.filter(item=>(item.vector?.[key]||0)<0);
+          const participants=positive.length+negative.length;
+          const score=positive.length-negative.length;
+          const direction=score===0?0:(score>0?1:-1);
+          const supporters=direction>0?positive:direction<0?negative:[];
+          const opponents=direction>0?negative:direction<0?positive:[];
+          return {key,...meta,positive,negative,participants,score,direction,supporters,opponents,position:participants?50+(score/participants)*43:50,label:direction>0?meta.positive:direction<0?meta.negative:'彼此抵消',repeated:supporters.length>=4&&supporters.length-opponents.length>=2};
+        });
+        const repeated=axes.filter(axis=>axis.repeated).sort((a,b)=>(b.supporters.length-b.opponents.length)-(a.supporters.length-a.opponents.length)||b.supporters.length-a.supporters.length);
+        const leading=(repeated.length?repeated:axes.filter(axis=>axis.direction).sort((a,b)=>Math.abs(b.score)-Math.abs(a.score))).slice(0,3);
+        const repeatedKeys=new Set(repeated.map(axis=>axis.key));
+        const outliers=items.map(item=>{
+          const unique=Object.entries(item.vector||{}).filter(([key,value])=>value&&!repeatedKeys.has(key));
+          return unique.length?`${item.label}单独强调“${vectorSignalLabels(Object.fromEntries(unique)).join('、')}”，尚未达到四体系重复门槛。`:null;
+        }).filter(Boolean).slice(0,4);
+        while(outliers.length<4)outliers.push('其余信号已被纳入共识轴，但支持与反向信号同时存在，因此不单独扩大解释。');
+        const summary=leading.length
+          ? `九体系中，最强的重复方向是${leading.map(axis=>`“${axis.label}”（${axis.supporters.length}项支持，${axis.opponents.length}项相反）`).join('、')}。这些数量表示象征分类的一致程度，不是概率或准确率。`
+          : '九体系在五条轴上彼此抵消，没有形成足够强的重复方向；本次应保留多种解释，不制造单一结论。';
+        return {items,axes,repeated,leading,outliers,summary};
+      }
       function classifyQuestion(question, focus) {
         const normalized=question.replace(/\s+/g,'');
         if(/欠款|欠钱|借款|借钱|还款|还钱|回款|应收款|债务|债权|讨债|追债/.test(normalized) || (focus==='wealth'&&/收回|追回/.test(normalized))) {
@@ -2521,22 +2790,26 @@ html>body{
         '先难后易':['过程不顺、仍有空间','它更像先经历拒绝、拖延或条件重谈，再出现部分解决；不能等“情况好转”，要先处理证据与执行路径。']
       };
       function questionAnalysis(d) {
+        const leading=d.synthesis.leading;
+        const consensusText=leading.length?leading.map(axis=>`“${axis.label}”`).join('、'):'没有形成强重复方向';
+        const consensusLevel=d.synthesis.repeated.length?'重复最强':'相对较强但未达到重复门槛';
+        const tensionSystems=[...new Set(leading.flatMap(axis=>axis.opponents.map(item=>item.label)))];
         if(d.intent.type==='debt_recovery') {
           const reading=debtThemeReadings[d.theme[0]];
           return {
-            status:reading[0],
+            status:leading[0]?`${leading[0].label} · 条件性`:reading[0],
             title:'这笔欠款能否顺利收回？',
-            direct:`象征性直答：${reading[1]}这不是对最终回款的事实预测；是否能收回，取决于债权证据、对方真实偿付能力与可执行资产。`,
-            obstacle:`本卦${hexagrams[d.hexIndex]}提示“${hexMessages[d.hexIndex].replace(/。$/,'')}”${d.cast.changingLines.length?`，第 ${d.cast.changingLines.join('、')} 爻动后转为${hexagrams[d.changedHexIndex]}卦，提示“${hexMessages[d.changedHexIndex].replace(/。$/,'')}”`:'，且没有动爻改变当前结构'}。在欠款语境中，阻力是旧催收方式与对方现实偿付能力，而不是你的催促强度。`,
+            direct:`象征性直答：综合九体系后，${consensusLevel}的是${consensusText}。在欠款语境中，${reading[1]}这不是对最终回款的事实预测；是否能收回，仍取决于债权证据、对方真实偿付能力与可执行资产。`,
+            obstacle:`九体系并非完全一致${tensionSystems.length?`，${tensionSystems.join('、')}提供了反向或缓冲信号`:''}。周易的${hexagrams[d.hexIndex]}卦${d.cast.changingLines.length?`经第 ${d.cast.changingLines.join('、')} 爻变为${hexagrams[d.changedHexIndex]}卦`:'无动爻'}只是九项中的一项；综合阻力更接近催收路径、现实偿付能力与规则边界，而不是催促强度。`,
             evidence:'只认三类硬信号：书面确认余额与期限、第一笔真实到账、可核验的收入或资产及分期来源。口头承诺、反复改期和“等情况好转”都不算。',
             action:'立即整理合同、借据、转账与聊天记录，书面确认欠款余额；给出具体分期与首付期限。若拒绝确认或首笔未付，尽快咨询当地法律专业人士评估时效、保全与追偿路径。'
           };
         }
         return {
-          status:'条件性判断',
+          status:leading[0]?`${leading[0].label} · 综合`:'多向信号',
           title:`直接回应：${d.input.question}`,
-          direct:`本次象征结果不支持脱离现实条件的“会”或“不会”。更接近“${d.theme[0]}”：${d.theme[1]}。把它作为下一步行动假设，而不是既定结果。`,
-          obstacle:`${hexagrams[d.hexIndex]}卦提示“${hexMessages[d.hexIndex].replace(/。$/,'')}”${d.cast.changingLines.length?`；变化后的${hexagrams[d.changedHexIndex]}卦提示“${hexMessages[d.changedHexIndex].replace(/。$/,'')}”`:''}。`,
+          direct:`综合九体系后，${consensusLevel}的方向是${consensusText}。这比单独读取周易更接近本次完整结果，但仍不支持脱离现实条件的“会”或“不会”；应把共识方向作为下一步行动假设，而不是既定未来。`,
+          obstacle:`九体系中仍有反向信息${tensionSystems.length?`，主要来自${tensionSystems.join('、')}`:'，但尚未形成单一主导'}。这意味着执行时要保留验证窗口，不能把多数象征误读成确定性。`,
           evidence:`只接受能够改变判断的现实反馈：明确承诺、实际支付、持续行动、可核验数据或专业意见。`,
           action:`围绕问题完成一个低成本、可撤回的验证动作；如果没有新证据，不因象征解释而扩大不可逆投入。`
         };
@@ -2609,7 +2882,7 @@ html>body{
       };
       let currentCast = null;
       let state = null;
-      let selected = 'iching';
+      let selected = 'synthesis';
 
       function hashText(text) {
         let h = 2166136261;
@@ -2890,6 +3163,7 @@ html>body{
           glyph:planetaryDay[3],title:`七曜 · ${planetaryDay[0]} · ${planetaryDay[1]}`,
           text:`公历出生日期对应星期${['日','一','二','三','四','五','六'][new Date(Date.UTC(year,month-1,day)).getUTCDay()]}，其传统曜星为${planetaryDay[1]}，象征${planetaryDay[2]}。`
         };
+        result.synthesis=cast?buildNineSynthesis(result):null;
         return result;
       }
       function polar(angle,radius) {
@@ -2976,6 +3250,11 @@ html>body{
       }
       function renderNav() {
         const nav=$('#ose-system-nav');nav.replaceChildren();
+        const synthesisButton=document.createElement('button');
+        synthesisButton.type='button';synthesisButton.className=`btn${selected==='synthesis'?' is-selected':''}`;
+        synthesisButton.setAttribute('aria-pressed',selected==='synthesis'?'true':'false');synthesisButton.textContent='综合';
+        synthesisButton.addEventListener('click',()=>{selected='synthesis';renderDetail();renderNav();renderChart(false);});
+        nav.appendChild(synthesisButton);
         systems.forEach(system=>{
           const button=document.createElement('button');button.type='button';button.className=`btn${system.id===selected?' is-selected':''}`;button.setAttribute('aria-pressed',system.id===selected?'true':'false');button.dataset.system=system.id;button.textContent=system.label;
           button.addEventListener('click',()=>{selected=system.id;renderDetail();renderNav();renderChart(false);});
@@ -2983,7 +3262,11 @@ html>body{
         });
       }
       function renderDetail() {
-        const d=state.details[selected];
+        const d=selected==='synthesis'
+          ? state.synthesis
+            ? {glyph:'合',title:`九体系综合 · ${state.synthesis.leading.map(axis=>axis.label).join(' × ')||'多向信号'}`,text:state.synthesis.summary}
+            : {glyph:'合',title:'九体系综合 · 等待正式生成',text:'正式起卦与抽取后，三项实时抽取和六项出生规则会共同进入五条共识轴。'}
+          : state.details[selected];
         $('#ose-detail-glyph').textContent=d.glyph;$('#ose-detail-title').textContent=d.title;$('#ose-detail-text').textContent=d.text;
       }
       function renderCastTrace() {
@@ -3014,22 +3297,22 @@ html>body{
         $('#ose-overall-note').textContent=state.input.city?'已记录城市，尚待真太阳时校正':'缺少出生城市';
         $('#ose-window').textContent=state.cast?`${hexagrams[state.hexIndex]} → ${hexagrams[state.changedHexIndex]}`:'待起卦';
         $('#ose-window-note').textContent=state.cast
-          ? `${state.cast.changingLines.length?`动爻：${state.cast.changingLines.join('、')}`:'无动爻'} · 三钱法六次投掷`
-          : '确认问题后进行六次三钱投掷';
+          ? `${state.cast.changingLines.length?`动爻 ${state.cast.changingLines.join('、')}`:'无动爻'} · 塔罗 3 张 · 符文 3 枚`
+          : '周易、塔罗与符文等待生成';
         $('#ose-consensus').textContent=`${state.activeCount} / ${systems.length}`;
-        $('#ose-consensus-note').textContent=state.cast?'九体系均已进入计算':'选择取法并起卦后九体系全部就绪';
+        $('#ose-consensus-note').textContent=state.cast?'3 项实时抽取 · 6 项规则计算':'选择取法后生成九体系结果';
         $('#ose-center-value').textContent=state.overall;
-        $('#ose-center-theme').textContent=state.theme[0];
+        $('#ose-center-theme').textContent=state.synthesis?.leading[0]?.label||state.theme[0];
         $('#ose-pillars').textContent=`四柱：${state.pillars.text}`;
         $('#ose-seed-badge').textContent=state.cast?`真实卦次 · ${state.cast.id}`:'尚未正式起卦';
         $('#ose-session-id').textContent=state.cast?`#${state.cast.id}`:'#PENDING';
-        $('#ose-redraw').innerHTML=!state.kua?'<i data-lucide="circle-alert" aria-hidden="true"></i> 请先选择命卦取法':state.cast?'<i data-lucide="rotate-ccw" aria-hidden="true"></i> 重新起卦':'<i data-lucide="coins" aria-hidden="true"></i> 正式起卦';
+        $('#ose-redraw').innerHTML=!state.kua?'<i data-lucide="circle-alert" aria-hidden="true"></i> 请先选择命卦取法':state.cast?'<i data-lucide="rotate-ccw" aria-hidden="true"></i> 重新生成九体系':'<i data-lucide="coins" aria-hidden="true"></i> 正式起卦与抽取';
         $('#ose-redraw').disabled=!state.kua;
         $('#ose-read').disabled=!state.cast||!state.kua;
         $('#ose-synthesis').setAttribute('aria-label',`${horizon.reportLabel}节律`);
         $('#ose-phase-1-title').textContent=`${horizon.phases[0]} · 收束`;
         $('#ose-phase-1-text').textContent=state.focus[1]+'。';
-        $('#ose-phase-2-title').textContent=`${horizon.phases[1]} · ${state.theme[0]}`;
+        $('#ose-phase-2-title').textContent=`${horizon.phases[1]} · ${state.synthesis?.leading[0]?.label||state.theme[0]}`;
         $('#ose-phase-2-text').textContent=state.cast?`${state.focus[2]}。`:'起卦后生成卦义转译。';
         $('#ose-phase-3-title').textContent=`${horizon.phases[2]} · 落地`;
         $('#ose-phase-3-text').textContent=state.focus[3]+'。';
@@ -3200,12 +3483,7 @@ html>body{
       function renderDeepReport() {
         const d=state;
         if(!d.cast)return;
-        const cardLabel=item=>`${item.card[0]}${item.reversed?'（逆位）':''}`;
-        const rootTarot=cardLabel(d.tarotCards[0]);
-        const primaryTarot=cardLabel(d.tarotCards[1]);
-        const adviceTarot=cardLabel(d.tarotCards[2]);
         const focus=d.focus[0];
-        const narrative=themeNarratives[d.theme[0]];
         const answer=questionAnalysis(d);
         const plan=timedPlan(d);
         const horizon=d.horizon;
@@ -3216,12 +3494,8 @@ html>body{
         $('#ose-report-question').textContent=`“${d.input.question}” · 出生 ${birthLabel}`;
         $('#ose-report-id').textContent=`CAST #${d.cast.id}`;
         $('#ose-report-scope').textContent=`${d.activeCount} 项有效 · 严格模式`;
-        $('#ose-report-lead').textContent=d.intent.type==='debt_recovery'
-          ? `先给结论：${answer.status}。${answer.direct.replace('象征性直答：','')}`
-          : `先给结论：本次三钱起卦得到${hexagrams[d.hexIndex]}卦${d.cast.changingLines.length?`，第 ${d.cast.changingLines.join('、')} 爻动，之卦为${hexagrams[d.changedHexIndex]}卦`:'，无动爻'}。在未来${horizon.reportLabel}的行动转译中，主线是“${d.theme[0]}”——${d.theme[1]}。`;
-        $('#ose-report-frame').textContent=d.intent.type==='debt_recovery'
-          ? `卦象层面，本卦${hexagrams[d.hexIndex]}、${d.cast.changingLines.length?`第 ${d.cast.changingLines.join('、')} 爻动并转为${hexagrams[d.changedHexIndex]}卦`:'无动爻'}；主线“${d.theme[0]}”在欠款问题上被转译为追偿路径判断，而不是套用一般财富模板。`
-          : `${narrative[0]} ${narrative[1]}`;
+        $('#ose-report-lead').textContent=`先给结论：${answer.status}。${answer.direct.replace('象征性直答：','')}`;
+        $('#ose-report-frame').textContent=`本次结论由九项实际结果共同形成，不再以周易作为默认中心。${d.synthesis.summary}`;
         $('#ose-answer-status').textContent=answer.status;
         $('#ose-answer-title').textContent=answer.title;
         $('#ose-answer-direct').textContent=answer.direct;
@@ -3229,25 +3503,39 @@ html>body{
         $('#ose-answer-evidence').textContent=answer.evidence;
         $('#ose-answer-action').textContent=answer.action;
 
+        $('#ose-nine-summary').textContent=d.synthesis.summary;
+        const chips=$('#ose-nine-chips');chips.replaceChildren();
+        d.synthesis.leading.forEach(axis=>{
+          const chip=document.createElement('span');chip.className='ose-consensus-chip';
+          chip.append(document.createTextNode(axis.label),pdfElement('small','',`${axis.supporters.length} 支持 · ${axis.opponents.length} 相反`));
+          chips.appendChild(chip);
+        });
+        const axisList=$('#ose-axis-list');axisList.replaceChildren();
+        d.synthesis.axes.forEach(axis=>{
+          const row=document.createElement('div');row.className='ose-axis-row';
+          const left=pdfElement('span','ose-axis-label',axis.left);
+          const track=document.createElement('div');track.className='ose-axis-track';
+          const marker=document.createElement('span');marker.className='ose-axis-marker';marker.style.left=`${Math.max(6,Math.min(94,axis.position))}%`;
+          track.appendChild(marker);track.setAttribute('aria-label',`${axis.label}：${axis.supporters.length}项支持，${axis.opponents.length}项相反`);
+          const right=pdfElement('span','ose-axis-label',axis.right);
+          row.append(left,track,right);axisList.appendChild(row);
+        });
+
         $('#ose-audit-zodiac').textContent=`公历 ${birthLabel} 按常用热带黄道日期区间计算为太阳${d.sign[0]}座，并非由随机象数生成；太阳星座只描述单一人格主题，不承担时间预测。`;
         $('#ose-audit-calculation').textContent=`周易使用网页三钱法：六次投掷自下而上为 ${d.cast.lines.map(line=>line.total).join('、')}，每枚钱币均由浏览器安全随机源独立产生；塔罗从78张牌中无重复抽取三张，符文从24枚古弗萨克符文中无重复抽取三枚。`;
         $('#ose-audit-limits').textContent=`四柱近似计算为 ${d.pillars.text}，出生城市“${d.input.city||'未填写'}”已记录，但尚未接入经纬度、历史时区和真太阳时，因此不做精确应期。生命灵数、生肖干支、洛书命卦与七曜均按页面公开规则直接计算。`;
 
-        $('#ose-consensus-1-topic').textContent=d.theme[0];
-        $('#ose-consensus-1-systems').textContent=`周易三钱法：${hexagrams[d.hexIndex]}卦${d.cast.changingLines.length?`，动爻 ${d.cast.changingLines.join('、')}，之${hexagrams[d.changedHexIndex]}卦`:'，无动爻'}`;
-        $('#ose-consensus-1-reading').textContent=`依据本卦卦义的人工分类映射，行动转译为“${d.theme[1]}”。这是解释层，不是卦象自行给出的事实日期或事件。`;
-        $('#ose-consensus-2-topic').textContent='抽取式原型补充';
-        $('#ose-consensus-2-systems').textContent=`塔罗：根源${rootTarot}、当下${primaryTarot}、建议${adviceTarot}；符文：${d.runeDraws.map(rune=>`${rune[0]} ${rune[1]}`).join('、')}`;
-        $('#ose-consensus-2-reading').textContent=`塔罗与符文分别呈现心理和原型提示，不因为同时出现就宣称它们与周易“真正重复”。应把牌义或符文义转成观察问题，再用行动验证。`;
-        $('#ose-consensus-3-topic').textContent='可计算的出生背景';
-        $('#ose-consensus-3-systems').textContent=`四柱${d.pillars.text}、太阳${d.sign[0]}、${d.yearPolarity}${d.yearElement}${d.animal}、命卦 ${d.kua}、生命灵数 ${d.lifePath}、${d.planetaryDay[0]}`;
-        $('#ose-consensus-3-reading').textContent=`这些是按输入规则计算的背景层，不负责给出事件日期。所有象征都必须接受明确回应、持续使用、合作承诺或身体指标等现实证据检验。`;
+        const tbody=$('#ose-consensus-body');tbody.replaceChildren();
+        d.synthesis.items.forEach(item=>{
+          const row=document.createElement('tr');
+          const systemCell=document.createElement('td');systemCell.textContent=item.label;
+          const resultCell=document.createElement('td');resultCell.textContent=item.result;
+          const signalCell=document.createElement('td');signalCell.textContent=`${item.signals.join('、')} · ${item.layer}`;
+          row.append(systemCell,resultCell,signalCell);tbody.appendChild(row);
+        });
 
-        $('#ose-signal-1').textContent=`洛书命卦 ${d.kua} 与${d.direction[0]}方按出生年及所选传统取法计算；方位本身不等于机会或结果。`;
-        $('#ose-signal-2').textContent=`生命灵数 ${d.lifePath} 来自公历出生日期数字递减，象征“${lifePathMessages[d.lifePath]}”；不同数字学流派可能采用不同保留规则。`;
-        $('#ose-signal-3').textContent=`生肖干支按立春年界计算为${d.yearPolarity}${d.yearElement}${d.animal}，它描述岁时文化原型，不是性格定论。`;
-        $('#ose-signal-4').textContent=`出生日期落在${d.planetaryDay[0]}，传统曜星为${d.planetaryDay[1]}；太阳${d.sign[0]}与七曜都只属于出生背景层。`;
-        $('#ose-report-method').textContent=`九体系分成两类：四柱、洛书、太阳星座、生肖干支、生命灵数与七曜按输入规则计算；周易、塔罗与符文使用安全随机源正式抽取。报告先识别问题语义，再把卦义转成与问题相关的行动假设，但不强行宣称跨体系一致。“${d.activeCount} / ${systems.length}”表示已进入计算的体系数量，不是准确率。任何随机抽取都不证明能够事实预测未来。`;
+        [1,2,3,4].forEach((number,index)=>{$(`#ose-signal-${number}`).textContent=d.synthesis.outliers[index];});
+        $('#ose-report-method').textContent=`三项实时抽取与六项出生规则全部进入同一模型。每个体系在每条轴上最多贡献一个方向票；“真正重复”要求至少四个体系同向，且比反向信号至少多两项。强度只用于判定该体系自身方向，不把任何传统当成统计概率。四柱、星座等出生背景不能单独承担时间预测；“9 / 9”表示九项均已取值，不是准确率。`;
 
         $('#ose-plan-title').textContent=`未来${horizon.reportLabel} · 三阶段行动`;
         $('#ose-stage-1-window').textContent=horizon.reportWindows[0];

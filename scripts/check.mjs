@@ -18,6 +18,8 @@ const required = [
   'id="ose-report"',
   'id="ose-direct-answer"',
   'id="ose-answer-direct"',
+  'id="ose-nine-synthesis"',
+  'id="ose-axis-list"',
   'id="ose-download-pdf"',
   'id="ose-report-audit"',
   'id="ose-consensus-table"',
@@ -77,6 +79,10 @@ if (html2canvas.length < 150_000 || jspdf.length < 300_000) {
 
 if (!html.includes('function downloadDeepReportPdf') || !html.includes('pdf.addImage')) {
   throw new Error('Visual PDF export must not disappear.');
+}
+
+if (!html.includes('function buildNineSynthesis') || !html.includes('id="ose-consensus-body"')) {
+  throw new Error('All nine systems must remain in the integrated synthesis report.');
 }
 
 console.log(`Validated ${scripts.length} inline scripts, ${required.length} UI contracts, ${horizonValues.length} horizons, and ${strictSystems.length} strict systems.`);
