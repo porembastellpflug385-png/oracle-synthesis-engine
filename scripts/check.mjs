@@ -12,6 +12,8 @@ const required = [
   'id="ose-cast-guidance"',
   'id="ose-cast-trace"',
   'id="ose-report"',
+  'id="ose-direct-answer"',
+  'id="ose-answer-direct"',
   'id="ose-report-audit"',
   'id="ose-consensus-table"',
   'id="ose-report-stage-1"',
@@ -58,6 +60,10 @@ if (/window\.openai|sendFollowUpMessage/.test(html)) {
 
 if (/Math\.floor\(rng\(\)\*64\)|stars\[Math\.floor/.test(html)) {
   throw new Error('Seeded placeholder divination must not return in strict mode.');
+}
+
+if (!html.includes("type:'debt_recovery'") || !html.includes('function debtTimedPlan')) {
+  throw new Error('Question-specific debt recovery analysis must not disappear.');
 }
 
 console.log(`Validated ${scripts.length} inline scripts, ${required.length} UI contracts, ${horizonValues.length} horizons, and ${strictSystems.length} strict systems.`);

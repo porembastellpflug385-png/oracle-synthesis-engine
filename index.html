@@ -1360,6 +1360,75 @@ html>body{
       font-weight: 590;
       color: var(--foreground);
     }
+    #oracle-synthesis-engine .ose-direct-answer {
+      margin: 1rem 0 1.35rem;
+      padding: clamp(1rem, 2.6vw, 1.35rem);
+      border: 1px solid color-mix(in srgb, var(--viz-series-1) 32%, var(--border));
+      border-radius: 1.2rem;
+      background:
+        radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--viz-series-1) 12%, transparent), transparent 34%),
+        color-mix(in srgb, var(--accent) 42%, transparent);
+    }
+    #oracle-synthesis-engine .ose-direct-answer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.8rem;
+    }
+    #oracle-synthesis-engine .ose-direct-answer-label,
+    #oracle-synthesis-engine .ose-direct-answer-status {
+      color: var(--viz-series-1);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+    #oracle-synthesis-engine .ose-direct-answer-status {
+      padding: 0.28rem 0.55rem;
+      border: 1px solid color-mix(in srgb, var(--viz-series-1) 28%, var(--border));
+      border-radius: 999px;
+      letter-spacing: 0.02em;
+      text-transform: none;
+    }
+    #oracle-synthesis-engine .ose-direct-answer h3 {
+      max-width: 34ch;
+      margin-bottom: 0.55rem;
+      font-size: clamp(1.2rem, 2.8vw, 1.65rem);
+      line-height: 1.3;
+    }
+    #oracle-synthesis-engine .ose-direct-answer > p {
+      max-width: 76ch;
+      margin-bottom: 1rem;
+      color: var(--muted-foreground);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+    #oracle-synthesis-engine .ose-direct-answer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.65rem;
+    }
+    #oracle-synthesis-engine .ose-answer-factor {
+      padding: 0.8rem;
+      border: 1px solid var(--border);
+      border-radius: 0.9rem;
+      background: color-mix(in srgb, var(--background) 46%, transparent);
+    }
+    #oracle-synthesis-engine .ose-answer-factor span {
+      display: block;
+      margin-bottom: 0.35rem;
+      color: var(--muted-foreground);
+      font-size: 0.68rem;
+      font-weight: 650;
+      letter-spacing: 0.06em;
+    }
+    #oracle-synthesis-engine .ose-answer-factor p {
+      margin: 0;
+      color: var(--foreground);
+      font-size: 0.84rem;
+      line-height: 1.55;
+    }
     #oracle-synthesis-engine .ose-report-section {
       padding: 1.35rem 0;
       border-top: 1px solid var(--border);
@@ -1715,7 +1784,8 @@ html>body{
       #oracle-synthesis-engine .ose-report-header,
       #oracle-synthesis-engine .ose-report-columns,
       #oracle-synthesis-engine .ose-decision-grid,
-      #oracle-synthesis-engine .ose-stage-grid {
+      #oracle-synthesis-engine .ose-stage-grid,
+      #oracle-synthesis-engine .ose-direct-answer-grid {
         grid-template-columns: 1fr;
       }
       #oracle-synthesis-engine .ose-report-meta {
@@ -1921,6 +1991,29 @@ html>body{
       <p id="ose-report-lead"></p>
       <p id="ose-report-frame" class="text-muted"></p>
     </div>
+
+    <section class="ose-direct-answer" id="ose-direct-answer">
+      <div class="ose-direct-answer-head">
+        <span class="ose-direct-answer-label">Question response</span>
+        <span class="ose-direct-answer-status" id="ose-answer-status">条件性判断</span>
+      </div>
+      <h3 id="ose-answer-title"></h3>
+      <p id="ose-answer-direct"></p>
+      <div class="ose-direct-answer-grid">
+        <article class="ose-answer-factor">
+          <span>主要阻力</span>
+          <p id="ose-answer-obstacle"></p>
+        </article>
+        <article class="ose-answer-factor">
+          <span>关键证据</span>
+          <p id="ose-answer-evidence"></p>
+        </article>
+        <article class="ose-answer-factor">
+          <span>现在行动</span>
+          <p id="ose-answer-action"></p>
+        </article>
+      </div>
+    </section>
 
     <section class="ose-report-section" id="ose-report-audit">
       <div class="ose-report-section-title">
@@ -2210,6 +2303,60 @@ html>body{
           stop: '到第 45 天，若新路径没有产生持续参与、明确邀请、收入可能或生活质量改善中的至少两项，停止扩大不可逆成本，保留退路并重做试验。'
         }
       };
+      function classifyQuestion(question, focus) {
+        const normalized=question.replace(/\s+/g,'');
+        if(/欠款|欠钱|借款|借钱|还款|还钱|回款|应收款|债务|债权|讨债|追债/.test(normalized) || (focus==='wealth'&&/收回|追回/.test(normalized))) {
+          return {type:'debt_recovery',label:'欠款回收'};
+        }
+        return {type:'general',label:focusCopy[focus][0]};
+      }
+      const debtThemeReadings = {
+        '守中破局':['有条件回收','存在回收空间，但不能等待对方自行好转；先固定债权与可执行线索，再改变一个无效的催收环节。'],
+        '减法生势':['优先止损','“顺利、全额、按原时间”回收的象征倾向偏弱；更现实的是先锁定可收部分，并停止继续扩大敞口。'],
+        '借力成局':['需要第三方介入','单靠私人催促的力量不足；若能引入担保人、调解、律师或正式程序，回收条件会比继续口头等待更清楚。'],
+        '换轨重启':['必须更换路径','不宜把它读成会自然顺利到账。旧催收方式已接近上限，结果更可能是延迟、分期，或必须转入正式追偿路径。'],
+        '慢即是快':['偏向延迟回收','短期顺利到账的象征信号不强；先核实偿付能力、资产线索与债权证据，比继续接受模糊承诺更重要。'],
+        '公开见光':['书面化后才可推进','有条件回收，但关键不是再谈感情，而是把余额、日期、分期和违约后果全部转成可核验的书面承诺。'],
+        '边界聚能':['先设最后边界','回收并非没有可能，但必须结束无限宽限；只有明确期限、首笔付款和违约后的正式动作，才能判断对方是否真正履约。'],
+        '先难后易':['过程不顺、仍有空间','它更像先经历拒绝、拖延或条件重谈，再出现部分解决；不能等“情况好转”，要先处理证据与执行路径。']
+      };
+      function questionAnalysis(d) {
+        if(d.intent.type==='debt_recovery') {
+          const reading=debtThemeReadings[d.theme[0]];
+          return {
+            status:reading[0],
+            title:'这笔欠款能否顺利收回？',
+            direct:`象征性直答：${reading[1]}这不是对最终回款的事实预测；是否能收回，取决于债权证据、对方真实偿付能力与可执行资产。`,
+            obstacle:`本卦${hexagrams[d.hexIndex]}提示“${hexMessages[d.hexIndex].replace(/。$/,'')}”${d.cast.changingLines.length?`，第 ${d.cast.changingLines.join('、')} 爻动后转为${hexagrams[d.changedHexIndex]}卦，提示“${hexMessages[d.changedHexIndex].replace(/。$/,'')}”`:'，且没有动爻改变当前结构'}。在欠款语境中，阻力是旧催收方式与对方现实偿付能力，而不是你的催促强度。`,
+            evidence:'只认三类硬信号：书面确认余额与期限、第一笔真实到账、可核验的收入或资产及分期来源。口头承诺、反复改期和“等情况好转”都不算。',
+            action:'立即整理合同、借据、转账与聊天记录，书面确认欠款余额；给出具体分期与首付期限。若拒绝确认或首笔未付，尽快咨询当地法律专业人士评估时效、保全与追偿路径。'
+          };
+        }
+        return {
+          status:'条件性判断',
+          title:`直接回应：${d.input.question}`,
+          direct:`本次象征结果不支持脱离现实条件的“会”或“不会”。更接近“${d.theme[0]}”：${d.theme[1]}。把它作为下一步行动假设，而不是既定结果。`,
+          obstacle:`${hexagrams[d.hexIndex]}卦提示“${hexMessages[d.hexIndex].replace(/。$/,'')}”${d.cast.changingLines.length?`；变化后的${hexagrams[d.changedHexIndex]}卦提示“${hexMessages[d.changedHexIndex].replace(/。$/,'')}”`:''}。`,
+          evidence:`只接受能够改变判断的现实反馈：明确承诺、实际支付、持续行动、可核验数据或专业意见。`,
+          action:`围绕问题完成一个低成本、可撤回的验证动作；如果没有新证据，不因象征解释而扩大不可逆投入。`
+        };
+      }
+      function debtTimedPlan(d) {
+        const h=d.horizon;
+        return {
+          phase1Heading:'保全：证据与余额',
+          phase1Body:'把合同、借据、转账凭证、聊天记录、已还金额、剩余本金、到期日、担保人与已知资产线索整理成一份时间线；不要再只依赖口头记忆。',
+          phase1Action:`交付物：一份可交给律师核查的债权证据包，以及未来${h.reportLabel}不再新增借款或无条件宽限的边界。`,
+          phase2Heading:'验证：书面计划与首笔',
+          phase2Body:'向欠款方提出一份具体书面方案：确认余额、每期金额、日期、第一笔付款期限和违约后的处理路径；用首笔实际到账验证偿付意愿。',
+          phase2Action:'窗口动作：不要把“答应会还”当进展，只记录书面确认、首笔到账和可核验资金来源。',
+          phase3Heading:'执行：协商或正式路径',
+          phase3Body:'若按期首付并持续履约，可保留分期；若再次失约、拒绝确权或隐瞒资产，停止重复口头协商，转向调解、律师函或由专业人士评估诉讼与保全。',
+          phase3Action:'结果标准：形成可执行的还款安排，或完成正式追偿路径选择；不是继续等待对方情况自然好转。',
+          hypothesis:'需要验证的假设：对方主要是暂时缺乏流动性，而不是缺乏偿还意愿。验证方式是要求其书面确认债务、披露可核验的偿付来源并支付第一笔；三者均回避，就推翻该假设。',
+          stop:`到${h.stopLabel}，若仍没有书面确权、第一笔到账、可核验资产或收入线索中的任何一项，停止新增借款、无担保宽限和重复口头催促；立即请当地法律专业人士核查诉讼时效与正式追偿选项。`
+        };
+      }
       const horizons = {
         hour: {
           label:'1 小时', reportLabel:'一小时', english:'1 Hour', totalMinutes:60, window:[12,48], stopLabel:'第 30 分钟',
@@ -2397,6 +2544,7 @@ html>body{
         return `${date.getMonth()+1}月${date.getDate()}日前后`;
       }
       function timedPlan(d) {
+        if(d.intent.type==='debt_recovery') return debtTimedPlan(d);
         const base=focusReports[d.input.focus];
         const h=d.horizon;
         const focus=d.focus[0];
@@ -2480,6 +2628,7 @@ html>body{
         const animal=zodiacAnimals[pillars.yearBranch];
         const yearElement=stemElements[pillars.yearStem];
         const yearPolarity=pillars.yearStem%2===0?'阳':'阴';
+        const intent=classifyQuestion(input.question,input.focus);
         const kua = kuaFor(year,input.gender,seed);
         const direction = kua ? directionByKua[kua] : null;
         const horizon = horizons[input.horizon];
@@ -2499,7 +2648,7 @@ html>body{
         const overall=Math.round(scores.reduce((sum,score)=>sum+score,0)/scores.length);
         const lifeCell = kua;
         const result = {
-          input,seed,cast,pillars,sign,lifePath,planetaryDay,animal,yearElement,yearPolarity,kua,direction,theme,hexIndex,changedHexIndex,changingLine,tarotCards,runeDraws,scores,availability,overall,activeCount,horizon,lifeCell,focus,
+          input,seed,cast,pillars,sign,lifePath,planetaryDay,animal,yearElement,yearPolarity,intent,kua,direction,theme,hexIndex,changedHexIndex,changingLine,tarotCards,runeDraws,scores,availability,overall,activeCount,horizon,lifeCell,focus,
           details: {}
         };
         const primaryTarot = tarotCards[1];
@@ -2697,17 +2846,28 @@ html>body{
         const adviceTarot=cardLabel(d.tarotCards[2]);
         const focus=d.focus[0];
         const narrative=themeNarratives[d.theme[0]];
+        const answer=questionAnalysis(d);
         const plan=timedPlan(d);
         const horizon=d.horizon;
         const [year,month,day]=d.input.date.split('-').map(Number);
         const birthLabel=`${year}年${month}月${day}日 ${d.input.time} · ${d.input.city||'城市未填写'}`;
         $('#ose-report-kicker').textContent=`Synthesis Report · ${horizon.english}`;
-        $('#ose-report-title').textContent=`${focus} · ${horizon.reportLabel}深度合参`;
+        $('#ose-report-title').textContent=`${d.intent.label||focus} · ${horizon.reportLabel}深度合参`;
         $('#ose-report-question').textContent=`“${d.input.question}” · 出生 ${birthLabel}`;
         $('#ose-report-id').textContent=`CAST #${d.cast.id}`;
         $('#ose-report-scope').textContent=`${d.activeCount} 项有效 · 严格模式`;
-        $('#ose-report-lead').textContent=`先给结论：本次三钱起卦得到${hexagrams[d.hexIndex]}卦${d.cast.changingLines.length?`，第 ${d.cast.changingLines.join('、')} 爻动，之卦为${hexagrams[d.changedHexIndex]}卦`:'，无动爻'}。在未来${horizon.reportLabel}的行动转译中，主线是“${d.theme[0]}”——${d.theme[1]}。`;
-        $('#ose-report-frame').textContent=`${narrative[0]} ${narrative[1]}`;
+        $('#ose-report-lead').textContent=d.intent.type==='debt_recovery'
+          ? `先给结论：${answer.status}。${answer.direct.replace('象征性直答：','')}`
+          : `先给结论：本次三钱起卦得到${hexagrams[d.hexIndex]}卦${d.cast.changingLines.length?`，第 ${d.cast.changingLines.join('、')} 爻动，之卦为${hexagrams[d.changedHexIndex]}卦`:'，无动爻'}。在未来${horizon.reportLabel}的行动转译中，主线是“${d.theme[0]}”——${d.theme[1]}。`;
+        $('#ose-report-frame').textContent=d.intent.type==='debt_recovery'
+          ? `卦象层面，本卦${hexagrams[d.hexIndex]}、${d.cast.changingLines.length?`第 ${d.cast.changingLines.join('、')} 爻动并转为${hexagrams[d.changedHexIndex]}卦`:'无动爻'}；主线“${d.theme[0]}”在欠款问题上被转译为追偿路径判断，而不是套用一般财富模板。`
+          : `${narrative[0]} ${narrative[1]}`;
+        $('#ose-answer-status').textContent=answer.status;
+        $('#ose-answer-title').textContent=answer.title;
+        $('#ose-answer-direct').textContent=answer.direct;
+        $('#ose-answer-obstacle').textContent=answer.obstacle;
+        $('#ose-answer-evidence').textContent=answer.evidence;
+        $('#ose-answer-action').textContent=answer.action;
 
         $('#ose-audit-zodiac').textContent=`公历 ${birthLabel} 按常用热带黄道日期区间计算为太阳${d.sign[0]}座，并非由随机象数生成；太阳星座只描述单一人格主题，不承担时间预测。`;
         $('#ose-audit-calculation').textContent=`周易使用网页三钱法：六次投掷自下而上为 ${d.cast.lines.map(line=>line.total).join('、')}，每枚钱币均由浏览器安全随机源独立产生；塔罗从78张牌中无重复抽取三张，符文从24枚古弗萨克符文中无重复抽取三枚。`;
@@ -2727,19 +2887,19 @@ html>body{
         $('#ose-signal-2').textContent=`生命灵数 ${d.lifePath} 来自公历出生日期数字递减，象征“${lifePathMessages[d.lifePath]}”；不同数字学流派可能采用不同保留规则。`;
         $('#ose-signal-3').textContent=`生肖干支按立春年界计算为${d.yearPolarity}${d.yearElement}${d.animal}，它描述岁时文化原型，不是性格定论。`;
         $('#ose-signal-4').textContent=`出生日期落在${d.planetaryDay[0]}，传统曜星为${d.planetaryDay[1]}；太阳${d.sign[0]}与七曜都只属于出生背景层。`;
-        $('#ose-report-method').textContent=`九体系分成两类：四柱、洛书、太阳星座、生肖干支、生命灵数与七曜按输入规则计算；周易、塔罗与符文使用安全随机源正式抽取。报告分层展示，不强行宣称跨体系一致；周易行动主题来自本卦卦义的人工分类映射。“${d.activeCount} / ${systems.length}”表示已进入计算的体系数量，不是准确率。任何随机抽取都不证明能够事实预测未来。`;
+        $('#ose-report-method').textContent=`九体系分成两类：四柱、洛书、太阳星座、生肖干支、生命灵数与七曜按输入规则计算；周易、塔罗与符文使用安全随机源正式抽取。报告先识别问题语义，再把卦义转成与问题相关的行动假设，但不强行宣称跨体系一致。“${d.activeCount} / ${systems.length}”表示已进入计算的体系数量，不是准确率。任何随机抽取都不证明能够事实预测未来。`;
 
         $('#ose-plan-title').textContent=`未来${horizon.reportLabel} · 三阶段行动`;
         $('#ose-stage-1-window').textContent=horizon.reportWindows[0];
-        $('#ose-stage-1-heading').textContent=`收束：${d.focus[1]}`;
+        $('#ose-stage-1-heading').textContent=plan.phase1Heading||`收束：${d.focus[1]}`;
         $('#ose-stage-1-body').textContent=plan.phase1Body;
         $('#ose-stage-1-action').textContent=plan.phase1Action;
         $('#ose-stage-2-window').textContent=horizon.reportWindows[1];
-        $('#ose-stage-2-heading').textContent=`验证：${d.focus[2]}`;
+        $('#ose-stage-2-heading').textContent=plan.phase2Heading||`验证：${d.focus[2]}`;
         $('#ose-stage-2-body').textContent=plan.phase2Body;
         $('#ose-stage-2-action').textContent=plan.phase2Action;
         $('#ose-stage-3-window').textContent=horizon.reportWindows[2];
-        $('#ose-stage-3-heading').textContent=`定势：${d.focus[3]}`;
+        $('#ose-stage-3-heading').textContent=plan.phase3Heading||`定势：${d.focus[3]}`;
         $('#ose-stage-3-body').textContent=plan.phase3Body;
         $('#ose-stage-3-action').textContent=plan.phase3Action;
 
